@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-lg bg-charcoal shadow-lg ">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="{{ asset('/assets/images/logo.jpg') }}" alt="Logo" style="max-height: 30px;">
+        </button>
+
+        <div class="row col-12 px-3 align-items-center">
+            <!-- Colonne du logo -->
+            <div class="col-2">
+                <a href="{{ path('app_main') }}" class="d-none d-lg-block">
+                    <img src="{{ asset('/assets/images/logo.png')}}" class="img-fluid" alt="Logo">
+                </a>
+            </div>
+
+            {# <div class="col-2"></div> #}
+
+            <!-- Colonne des éléments de navigation (col-5) -->
+            <div class="col-sm-12 col-md-6 col-lg-5 collapse navbar-collapse m-auto" id="navbarNav">
+                <ul class="navbar-nav d-flex justify-content-around w-100">
+                    <li class="nav-item">
+                        {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_produits' %}active{% endif %}" href="{{ path('app_produits') }}" >Produits</a> #}
+                    </li>
+                    <li class="nav-item">
+                        {# <a class="nav-link fs-4  {% if app.request.get('_route') starts with 'app_categories' %}active{% endif %}" href="{{ path('app_categories') }}" >Categories</a> #}
+                    </li>
+                    <li class="nav-item ">
+                        {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_panier' %}active{% endif %}" href="{{ path('app_panier') }}">Panier</a> #}
+                    </li>
+                    <li class="nav-item ">
+                        {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a> #}
+                    </li>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <li class="nav-item ">
+                            {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_profil' %}active{% endif %}" href="{{ path('app_profil') }}">Profil</a> #}
+                        </li>
+                        {% else %}
+                        <li class="nav-item ">
+                            {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_login' %}active{% endif %}" href="{{ path('app_login') }}">Connexion</a> #}
+                        </li>
+                    {% endif %}
+                    
+
+                </ul>
+            </div>
+
+    {# <div class="col-1"></div> #}
+
+            <!-- Colonne de la barre de recherche -->
+            <div class="col-2">
+                <!-- Formulaire de recherche -->
+                <form class="d-flex ms-auto d-none d-lg-flex shadow border border-dark rounded-4" role="search" id="search"> <!-- Masque le formulaire sur les petits écrans -->
+                    <input class="form-control bg-white border-dark" type="search" placeholder="Rechercher" aria-label="search" id="searchInput" name="searchQuery">   
+                    <button class="btn shadow" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#C9A96E" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+                        </svg>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</nav>

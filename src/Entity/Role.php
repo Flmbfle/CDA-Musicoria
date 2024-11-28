@@ -21,13 +21,14 @@ class Role
     /**
      * @var Collection<int, Utilisateur>
      */
-    #[ORM\OneToMany(targetEntity: Utilisateur::class, mappedBy: 'role')]
+    #[ORM\OneToMany(targetEntity: Utilisateur::class, mappedBy: 'Role')]
     private Collection $utilisateurs;
 
     public function __construct()
     {
         $this->utilisateurs = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -58,7 +59,7 @@ class Role
     {
         if (!$this->utilisateurs->contains($utilisateur)) {
             $this->utilisateurs->add($utilisateur);
-            $utilisateur->setrole($this);
+            $utilisateur->setRole($this);
         }
 
         return $this;
@@ -68,11 +69,12 @@ class Role
     {
         if ($this->utilisateurs->removeElement($utilisateur)) {
             // set the owning side to null (unless already changed)
-            if ($utilisateur->getrole() === $this) {
-                $utilisateur->setrole(null);
+            if ($utilisateur->getRoles() === $this) {
+                $utilisateur->setRole(null);
             }
         }
 
         return $this;
     }
+
 }

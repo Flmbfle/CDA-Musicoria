@@ -1,0 +1,26 @@
+:root 
+{
+    
+    --sidebar-bg: #333333;
+    --sidebar-logo-color: #C9A96E;
+    --sidebar-menu-color: #C9A96E;
+    --sidebar-menu-icon-color: #C9A96E;
+    --sidebar-menu-header-color: #C9A96E;
+    --sidebar-menu-active-item-bg: #585858;
+    --sidebar-menu-active-item-color: #C9A96E;
+    --content-search-input-bg: #e6e6e6;
+    --form-switch-bg: #e6e6e6;
+    --form-switch-border-color: #333333;
+    --form-switch-checked-bg: green;
+    --form-type-check-input-checked-bg: #C9A96E;
+    --form-type-check-input-border-color: #333333;
+    --table-selected-cell-bg: #e6e6e6;
+    --button-primary-bg: #333333;
+    --button-primary-color: #C9A96E;
+}
+
+.menu-item-label
+{
+    font-size: 0.9rem;
+    margin: 0.2rem;
+}

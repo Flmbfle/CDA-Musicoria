@@ -8,11 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte associé à cet email')]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -51,7 +53,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $coefficient = null;
 
     #[ORM\ManyToOne(inversedBy: 'utilisateurs')]
-    private ?Role $role = null;
+    private ?Role $Role = null;
 
     #[ORM\Column(length: 500)]
     private ?string $adresse = null;
@@ -62,9 +64,16 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'utilisateur')]
     private Collection $commande;
 
+    #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    private ?\DateTimeImmutable $date_inscription = null;
+
+    #[ORM\Column]
+    private bool $isVerified = false;
+
     public function __construct()
     {
         $this->commande = new ArrayCollection();
+        $this->date_inscription = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -101,9 +110,14 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles = [];
+
+        // Ajoute le rôle associé
+        if ($this->Role) {
+            $roles[] = $this->Role->getNom(); // Assure-toi que l'entité Role a une méthode getName()
+        }
+        // Ajoute un rôle par défaut
+        $roles[] = 'ROLE_CLIENT';
 
         return array_unique($roles);
     }
@@ -111,9 +125,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param list<string> $roles
      */
-    public function setRoles(array $roles): static
+    public function setRole(Role $role = null): static
     {
-        $this->roles = $roles;
+        $this->Role = $role;
 
         return $this;
     }
@@ -193,6 +207,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getDateInscription(): ?\DateTimeImmutable
+    {
+        return $this->date_inscription;
+    }
+
+    public function setDateInscription(\DateTimeImmutable $date_inscription): static
+    {
+        $this->date_inscription = $date_inscription;
+
+        return $this;
+    }
+
     public function getCoefficient(): ?string
     {
         return $this->coefficient;
@@ -201,18 +227,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCoefficient(?string $coefficient): static
     {
         $this->coefficient = $coefficient;
-
-        return $this;
-    }
-
-    public function getrole(): ?Role
-    {
-        return $this->role;
-    }
-
-    public function setrole(?Role $role): static
-    {
-        $this->role = $role;
 
         return $this;
     }
@@ -255,6 +269,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
                 $commande->setUtilisateur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

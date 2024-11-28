@@ -1,0 +1,13 @@
+Pour se connecter au container symfony :
+    docker exec -it musicoria-symfony-1 bash
+
+Pour crée une migration :
+    php bin/console make:migration
+
+Pour executer la migration :
+    php bin/console doctrine:migrations:migrate
+
+    
+
+Pour vide le cache :
+    php bin/console cache:clear
