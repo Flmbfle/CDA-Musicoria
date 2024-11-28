@@ -10,23 +10,26 @@ RUN apt-get update && apt-get install -y \
     zlib1g-dev \
     git \
     unzip \
+    libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql intl opcache
+    && docker-php-ext-install gd pdo pdo_mysql intl opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Étape 3 : Installer Composer (le gestionnaire de dépendances PHP)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Étape 4 : Définir le répertoire de travail dans le conteneur
+# Étape 4 : Installer wait-for-it (pour attendre que la base de données soit prête)
+RUN curl -sS https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -o /usr/local/bin/wait-for-it && chmod +x /usr/local/bin/wait-for-it
+
+# Étape 5 : Définir le répertoire de travail dans le conteneur
 WORKDIR /var/www/html
 
-# Étape 5 : Copier les fichiers du projet dans le conteneur
+# Étape 6 : Copier les fichiers du projet dans le conteneur
 COPY . /var/www/html
 
-# Étape 6 : Installer les dépendances PHP via Composer
+# Étape 7 : Installer les dépendances PHP via Composer
 RUN composer install --no-scripts --no-interaction
 
-# Étape 7 : Exposer le port 9000 (pour que PHP-FPM fonctionne)
+# Étape 8 : Exposer le port 9000 (pour que PHP-FPM fonctionne)
 EXPOSE 9000
 
-# Étape 8 : Lancer PHP-FPM
-CMD ["php-fpm"]
