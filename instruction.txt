@@ -1,5 +1,14 @@
+Pour commencer utiliser dans le teminal :
+    docker-compose up -d
+
 Pour se connecter au container symfony :
-    docker exec -it musicoria-symfony-1 bash
+    docker exec -it cda-musicoria-symfony-1 bash
+
+Installer composer :
+    composer install
+
+Pour crée la base et les fixtures utiliser : 
+    composer fixtures
 
 Pour crée une migration :
     php bin/console make:migration
@@ -7,7 +16,6 @@ Pour crée une migration :
 Pour executer la migration :
     php bin/console doctrine:migrations:migrate
 
-    
 
 Pour vide le cache :
     php bin/console cache:clear

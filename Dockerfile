@@ -1,5 +1,5 @@
-# Étape 1 : Utiliser une image de base PHP avec FPM (FastCGI Process Manager)
-FROM php:8.2-fpm
+# Étape 1 : Utiliser une image de base PHP 8.3 avec FPM
+FROM php:8.3-fpm
 
 # Étape 2 : Installer les dépendances nécessaires pour les extensions PHP et autres outils
 RUN apt-get update && apt-get install -y \
@@ -8,11 +8,12 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libicu-dev \
     zlib1g-dev \
+    libxml2-dev \
     git \
     unzip \
-    libxml2-dev \
+    libzip-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql intl opcache \
+    && docker-php-ext-install gd pdo pdo_mysql intl opcache zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Étape 3 : Installer Composer (le gestionnaire de dépendances PHP)
@@ -33,3 +34,6 @@ RUN composer install --no-scripts --no-interaction
 # Étape 8 : Exposer le port 9000 (pour que PHP-FPM fonctionne)
 EXPOSE 9000
 
+# Étape 9 : Installer Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash && \
+    mv /root/.symfony*/bin/symfony /usr/local/bin/symfony

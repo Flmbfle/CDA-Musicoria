@@ -39,11 +39,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/employe, roles: ROLE_EMPLOYE}
         - { path: ^/client, roles: ROLE_CLIENT }
     role_hierarchy:
         ROLE_EMPLOYE: ROLE_CLIENT
-        ROLE_ADMIN: ROLE_EMPLOYE oles: ROLE_ADMIN }
+        ROLE_ADMIN: ROLE_EMPLOYE 
 
 
 when@test:
