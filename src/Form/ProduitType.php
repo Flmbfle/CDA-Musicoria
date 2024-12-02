@@ -99,7 +99,7 @@ class ProduitType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Prix d\'achat',
+                'label' => 'Prix de vente',
                 'label_attr' => [
                     'class' => 'form-label'
                 ],
@@ -110,18 +110,25 @@ class ProduitType extends AbstractType
                 'currency' => 'EUR',
             ])
             ->add('fournisseur', EntityType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                ],
                 'class' => Fournisseur::class,
                 'choice_label' => 'nom',
                 'placeholder' => 'Sélectionnez un fournisseur',
             ])
             ->add('categorie', EntityType::class, [
+                'attr' => [
+                    'class' => 'form-control',
+                ],
                 'class' => Categorie::class,
                 'label' => 'Catégorie',
                 'choice_label' => 'libelle',
+                'placeholder' => 'Sélectionnez une catégorie',
             ])
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-dark',
+                    'class' => 'form-control btn btn-dark',
                 ],
                 'label' => 'Créer le produit',
             ]);

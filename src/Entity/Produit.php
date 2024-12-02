@@ -113,6 +113,18 @@ class Produit
         return $this;
     }
 
+    // Nouveau getter enrichi
+    public function getImageUrl(): string
+    {
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            // Si l'image est une URL, on la retourne telle quelle
+            return $this->image;
+        }
+    
+        // Si l'image est un chemin local, on ajoute le chemin relatif du dossier public
+        return '/images/' . $this->image;
+    }
+
     public function getStock(): ?int
     {
         return $this->stock;

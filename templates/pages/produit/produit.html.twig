@@ -60,7 +60,7 @@
                         <div class="col-md-3 p-3">
                             <div class="card shadow rounded-3">
                                 {# <a href="{{ path('app_produit_detail', { slug: produit.slug }) }}"> #}
-                                    <img src="{{ asset('/assets/images/produit/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.slug }}" loading="lazy">
+                                    <img src="{{ produit.getImageUrl() }}" class="card-img-top" alt="{{ produit.slug }}">
                                 </a>
                                 <div class="card-body">
                                     <h5 class="card-title">{{ produit.libelle }}</h5>

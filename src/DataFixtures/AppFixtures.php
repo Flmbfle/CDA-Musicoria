@@ -16,6 +16,7 @@ class AppFixtures extends Fixture
      * @var Generator
      */
     private Generator $faker;
+    
 
     public function __construct()
     {
@@ -23,35 +24,38 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
-        $categorie = new Categorie();
-        $categorie->setLibelle('Categorie #1')
-                ->setImage('')
-                ->setSlug('');
-        $manager->persist($categorie);
+        for ($p = 0; $p < 10; $p++) {
+            $categorie = new Categorie();
+            $categorie->setLibelle('Categorie ' . $this->faker->word)
+                      ->setImage($this->faker->imageUrl(640, 480, 'music', true)) // Image d'une catégorie
+                      ->setSlug($this->faker->slug);
+            $manager->persist($categorie);
+        }
 
-        $fournisseur = new Fournisseur();
-        $fournisseur->setNom('Fournisseur #1')
-                    ->setEmail('')
-                    ->setPhone('')
-                    ->setAdresse('');
-        $manager->persist($fournisseur);
+        for ($p = 0; $p < 10; $p++) {
+            $fournisseur = new Fournisseur();
+            $fournisseur->setNom('Fournisseur ' . $this->faker->word)
+                        ->setEmail($this->faker->email)
+                        ->setPhone($this->faker->phoneNumber)
+                        ->setAdresse($this->faker->address);
+            $manager->persist($fournisseur);
+        }
 
-        for ($p = 0; $p < 50; $p++)
-        {
+        for ($p = 0; $p < 25; $p++) {
             $produit = new Produit();
             $produit->setLibelle($this->faker->word)
                     ->setPrixAchat($pa = mt_rand(0, 1000))
                     ->setPrixVente(mt_rand($pa, 1000))
                     ->setStock(mt_rand(0, 50))
-                    ->setfournisseur($fournisseur)
-                    ->setcategorie($categorie)
-                    ->setDescription('Lorem')
-                    ->setImage('')
-                    ->setSlug('')
+                    ->setFournisseur($fournisseur)
+                    ->setCategorie($categorie)
+                    ->setDescription($this->faker->sentence)
+                    ->setImage($this->faker->imageUrl(640, 480, 'musical instrument', true)) // Image pour le produit
+                    ->setSlug($this->faker->slug)
                     ->setActive(true);
             $manager->persist($produit);
         }
-
+    
         $manager->flush();
     }
 }

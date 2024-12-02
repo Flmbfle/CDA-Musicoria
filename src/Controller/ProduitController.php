@@ -37,10 +37,16 @@ class ProduitController extends AbstractController
     }
 
     #[Route('/produit/nouveau', name: 'nouveau.produit', methods:['POST', 'GET'])]
-    public function new() : Response
+    public function new(Request $request) : Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            dd($form->getData());
+        }
 
         return $this->render('pages/produit/nouveau.html.twig', [
             'form' => $form->createView()
