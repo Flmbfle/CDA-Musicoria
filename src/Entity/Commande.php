@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -36,13 +37,16 @@ class Commande
     private ?float $remise = null;
 
     #[ORM\Column]
+    #[Assert\NotNull()]
     private ?float $totalTtc = null;
 
     #[ORM\Column]
+    #[Assert\NotNull()]
     private ?float $totalHt = null;
 
     public function __construct()
     {
+        $this->dateCommande = new \DateTimeImmutable();
         $this->ligneCommandes = new ArrayCollection();
     }
 

@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Musicoria - Produits{% endblock %}
+
+{% block body %}
+{% if not produits.items is same as ([]) %}
+    <section id="bestProduct" class="my-4">
+        <div class="col-10 mx-auto">
+            <div class="row d-flex justify-content-around">
+                <!-- A boucler 5* avec fonctions pour sortir les meilleurs produits -->
+                {# {% for produit in produit %} #}
+                    {# <div class="col-md-2">
+                        <div class="card text-white">
+                            <a href="" class="text-decoration-none">
+                                <img src="{{ asset ('/assets/images/produit/' ~ produit . image ) }}" class="card-img" alt="{{ produit . slug }}">
+                                <div class="card-img-overlay d-flex justify-content-center align-items-center p-0">
+                                    <h5 class="card-title bg-dark bg-opacity-50 p-2 rounded gold">{{ produit . libelle }}</h5>
+                                </div>
+                            </a>
+                        </div>
+                    </div> #}
+                {# {% endfor %} #}
+            </div>
+        </div>
+    </section>
+
+
+    <section id="productFilter" class="col-12 bg-li my-4 py-3 inner-shadow">
+        <div class="col-10 mx-auto">
+            <div class="row d-flex justify-content-around align-items-center">
+                <!-- Affichage du nombre total de résultats -->
+                <div class="count col-3">
+                    Voir les {{ produits.getTotalItemCount }} résultats
+                </div>
+
+                <!-- Bouton de filtre avec menu déroulant -->
+                <div class="btn-group col-auto">
+                    <button class="btn btn-sm dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filtre
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        {# <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'popularity' }) }}">Popularité</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'newest' }) }}">Nouveauté</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'oldest' }) }}">Plus anciens</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'price_asc' }) }}">Prix (asc)</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'price_desc' }) }}">Prix (desc)</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'alphabetical_asc' }) }}">Alphabétique (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_produits', { 'sort': 'alphabetical_desc' }) }}">Alphabétique (Z-A)</a></li> #}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="productList" class="product-list col-12">
+        <div class="container col-10 mx-auto my-4">
+            {% for row in produits|slice(0, 12)|batch(4) %}
+                <div class="row d-flex justify-content-center">
+                    {% for produit in row %}
+                        <div class="col-md-3 p-3">
+                            <div class="card shadow rounded-3">
+                                {# <a href="{{ path('app_produit_detail', { slug: produit.slug }) }}"> #}
+                                    <img src="{{ asset('/assets/images/produit/' ~ produit.image) }}" class="card-img-top" alt="{{ produit.slug }}" loading="lazy">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ produit.libelle }}</h5>
+                                    <p class="card-text">{{ produit.prixVente }} €</p>
+                                    <a href="#" class="btn bi bi-heart"></a>
+                                    {# <a href="{{ path('panier_ajouter', {'id': produit.id}) }}" class="btn bi bi-cart-plus"></a> #}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    <section id="productPagination">
+        <div class="d-flex justify-content-center align-items-center py-4">
+            <div class="pagination">
+                {{ knp_pagination_render(produits) }}
+            </div>
+        </div>
+    </section>
+{% else %}
+    <h4>Il n'y a pas de produits.</h4>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Produit{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Ajout d'un nouveau produit</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.libelle) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.prixAchat) }}
+            {{ form_row(form.prixVente) }}
+            {{ form_row(form.stock) }}
+            {{ form_row(form.active) }}
+            {{ form_row(form.categorie) }}
+            {{ form_row(form.fournisseur) }}
+            {{ form_row(form.image) }}
+            {{ form_row(form.slug)}}
+            {{ form_row(form.submit)}}
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}

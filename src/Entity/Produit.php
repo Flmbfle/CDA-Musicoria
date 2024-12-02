@@ -5,8 +5,8 @@ namespace App\Entity;
 use App\Repository\ProduitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -17,15 +17,22 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $libelle = null;
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotBlank()]
     private ?string $description = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $slug = null;
 
     #[ORM\Column(length: 500)]
     private ?string $image = null;
 
     #[ORM\Column]
+    #[Assert\NotNull()]
     private ?int $stock = null;
 
     #[ORM\Column]
@@ -47,13 +54,21 @@ class Produit
     private Collection $ligneCommandes;
 
     #[ORM\Column]
+    #[Assert\Positive()]
+    #[Assert\NotNull()]
     private ?float $prixAchat = null;
 
     #[ORM\Column]
+    #[Assert\Positive()]
+    #[Assert\NotNull()]
     private ?float $prixVente = null;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->ligneCommandes = new ArrayCollection();
     }
 
@@ -208,6 +223,18 @@ class Produit
     public function setPrixVente(float $prixVente): static
     {
         $this->prixVente = $prixVente;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

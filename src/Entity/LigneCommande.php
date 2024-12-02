@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\LigneCommandeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: LigneCommandeRepository::class)]
 class LigneCommande
@@ -25,9 +27,13 @@ class LigneCommande
     private ?Produit $produit = null;
 
     #[ORM\Column]
+    #[Assert\Positive()]
+    #[Assert\NotNull()]
     private ?float $total = null;
 
     #[ORM\Column]
+    #[Assert\Positive()]
+    #[Assert\NotNull()]
     private ?float $prixUnitaire = null;
 
     public function getId(): ?int
