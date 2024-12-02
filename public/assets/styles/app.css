@@ -1,0 +1,169 @@
+body
+{
+    background-color: #f5f5f5;
+    /* Texte normal avec Roboto Regular */
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+}
+
+nav , footer
+{
+    min-height: 90px; /* Ajustez cette valeur selon vos besoins */
+    display: flex;
+    align-items: center; /* Centre le contenu verticalement */
+}
+footer {
+    margin-top: auto;
+}
+
+/* Texte en gras avec Roboto Bold */
+h1, h2, h3 
+{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700; /* Bold */
+}
+
+p
+{
+    font-size: 1.1rem;
+}
+
+/* Texte en italique avec Roboto Italic */
+em {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.charcoal 
+{
+    color: #333333;
+}
+
+.bg-charcoal 
+{
+    background-color: #333333;
+}
+
+.white
+{
+    color:  #F5F5F5;
+}
+
+.gold 
+{
+    color: #C9A96E;
+}
+.bg-white
+{
+    background-color: #F5F5F5;
+}
+
+.bg-li
+{
+    background-color: #e6e6e6;
+}
+
+.nav-link , .nav-item {
+    color: #C9A96E;
+    font-size: large;
+    margin: auto;
+    transition: transform 0.3s ease, font-weight 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover , .nav-item:hover {
+    color: #C9A96E; /* Couleur sur hover */
+    font-weight: bold; /* Mettre en gras */
+    transform: scale(1.15); /* Zoom de 15% */
+}
+
+
+
+.bg-gold 
+{
+    background-color: #C9A96E;
+}
+
+.fog 
+{
+    color: #585858;
+}
+
+.bg-fog 
+{
+    background-color: #585858;
+}
+
+.shadow
+{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.inner-shadow
+{
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-nav .nav-link.active
+{
+    color: #C9A96E;
+    font-size: 1.5rem;
+    margin: auto;
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* Appliquer uniquement aux images dans la section .product-list */
+.product-list .card-img-top {
+    width: 100%;          /* L'image prendra la largeur de la carte */
+    height: 300px;        /* Fixe une hauteur uniforme pour toutes les images */
+    object-fit: cover;    /* Permet à l'image de couvrir la zone sans déformer */
+}
+
+#produitDetail .card-img-top
+{
+    width: 100%;          /* L'image prendra la largeur de la carte */
+    height: 50vh;        /* Fixe une hauteur uniforme pour toutes les images */
+    object-fit: cover;    /* Permet à l'image de couvrir la zone sans déformer */
+}
+
+.categorie-list .card-img-top {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.categorie-list .card-title {
+    color: #C9A96E; /* Rend l'intérieur du texte transparent */ 
+    text-shadow: 
+        2px 2px 0 #333333,
+        -2px 2px 0 #333333,
+        2px -2px 0 #333333,
+        -2px -2px 0 #333333,
+        0 2px 0 #333333,
+        0 -2px 0 #333333,
+        2px 0 0 #333333,
+        -2px 0 0 #333333;
+    transition: transform 0.3s ease, text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.categorie-list .card-title:hover {
+    transform: scale(1.3); /* Zoom sur le texte */
+    font-weight: bold;     /* Texte en gras */
+    color: #C9A96E;        /* Texte rempli */
+    text-shadow: 
+        2px 2px 0 #333333,
+        -2px 2px 0 #333333,
+        2px -2px 0 #333333,
+        -2px -2px 0 #333333,
+        0 2px 0 #333333,
+        0 -2px 0 #333333,
+        2px 0 0 #333333,
+        -2px 0 0 #333333;
+}
+
+.table-centered td, 
+.table-centered th {
+    text-align: center; /* Centrage horizontal */
+    vertical-align: middle; /* Centrage vertical */
+}
