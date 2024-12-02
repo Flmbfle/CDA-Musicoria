@@ -10,12 +10,14 @@ Installer composer :
 Pour crée la base et les fixtures utiliser : 
     composer fixtures
 
+Lancer le serveur web:
+    php -S 0.0.0.0:8000 -t public
+
 Pour crée une migration :
     php bin/console make:migration
 
 Pour executer la migration :
     php bin/console doctrine:migrations:migrate
-
 
 Pour vide le cache :
     php bin/console cache:clear
