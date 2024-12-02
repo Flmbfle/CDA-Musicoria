@@ -17,17 +17,18 @@ class LigneCommande
     #[ORM\Column]
     private ?int $quantite = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $prixUnitaire = null;
-
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $total = null;
 
     #[ORM\ManyToOne(inversedBy: 'ligneCommandes')]
     private ?Commande $commande = null;
 
     #[ORM\ManyToOne(inversedBy: 'ligneCommandes')]
     private ?Produit $produit = null;
+
+    #[ORM\Column]
+    private ?float $total = null;
+
+    #[ORM\Column]
+    private ?float $prixUnitaire = null;
 
     public function getId(): ?int
     {
@@ -42,30 +43,6 @@ class LigneCommande
     public function setQuantite(int $quantite): static
     {
         $this->quantite = $quantite;
-
-        return $this;
-    }
-
-    public function getPrixUnitaire(): ?string
-    {
-        return $this->prixUnitaire;
-    }
-
-    public function setPrixUnitaire(string $prixUnitaire): static
-    {
-        $this->prixUnitaire = $prixUnitaire;
-
-        return $this;
-    }
-
-    public function getTotal(): ?string
-    {
-        return $this->total;
-    }
-
-    public function setTotal(string $total): static
-    {
-        $this->total = $total;
 
         return $this;
     }
@@ -90,6 +67,30 @@ class LigneCommande
     public function setProduit(?Produit $produit): static
     {
         $this->produit = $produit;
+
+        return $this;
+    }
+
+    public function getTotal(): ?float
+    {
+        return $this->total;
+    }
+
+    public function setTotal(float $total): static
+    {
+        $this->total = $total;
+
+        return $this;
+    }
+
+    public function getPrixUnitaire(): ?float
+    {
+        return $this->prixUnitaire;
+    }
+
+    public function setPrixUnitaire(float $prixUnitaire): static
+    {
+        $this->prixUnitaire = $prixUnitaire;
 
         return $this;
     }

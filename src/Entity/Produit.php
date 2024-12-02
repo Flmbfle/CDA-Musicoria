@@ -22,12 +22,6 @@ class Produit
     #[ORM\Column(length: 500)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $prixAchat = null;
-
-    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $prixVente = null;
-
     #[ORM\Column(length: 500)]
     private ?string $image = null;
 
@@ -51,6 +45,12 @@ class Produit
      */
     #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'produit')]
     private Collection $ligneCommandes;
+
+    #[ORM\Column]
+    private ?float $prixAchat = null;
+
+    #[ORM\Column]
+    private ?float $prixVente = null;
 
     public function __construct()
     {
@@ -82,30 +82,6 @@ class Produit
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPrixAchat(): ?string
-    {
-        return $this->prixAchat;
-    }
-
-    public function setPrixAchat(string $prixAchat): static
-    {
-        $this->prixAchat = $prixAchat;
-
-        return $this;
-    }
-
-    public function getPrixVente(): ?string
-    {
-        return $this->prixVente;
-    }
-
-    public function setPrixVente(string $prixVente): static
-    {
-        $this->prixVente = $prixVente;
 
         return $this;
     }
@@ -208,6 +184,30 @@ class Produit
                 $ligneCommande->setProduit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPrixAchat(): ?float
+    {
+        return $this->prixAchat;
+    }
+
+    public function setPrixAchat(float $prixAchat): static
+    {
+        $this->prixAchat = $prixAchat;
+
+        return $this;
+    }
+
+    public function getPrixVente(): ?float
+    {
+        return $this->prixVente;
+    }
+
+    public function setPrixVente(float $prixVente): static
+    {
+        $this->prixVente = $prixVente;
 
         return $this;
     }
