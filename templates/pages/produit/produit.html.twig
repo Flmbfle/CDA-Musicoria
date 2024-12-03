@@ -24,10 +24,6 @@
         </div>
     </section>
 
-    {# !!! Mettre en ADMIN only !!! #}
-    <section>
-        <a href="{{ path('nouveau.produit')}} class="btn btn-info"">Nouveau produit</a>
-    </section>
 
 
     <section id="productFilter" class="col-12 bg-li my-4 py-3 inner-shadow">
@@ -55,6 +51,10 @@
                 </div>
             </div>
         </div>
+    </section>
+    {# !!! Mettre en ADMIN only !!! #}
+    <section>
+        <a href="{{ path('nouveau.produit')}}" class="btn btn-info">Nouveau produit</a>
     </section>
 
     <section id="productList" class="product-list col-12">
