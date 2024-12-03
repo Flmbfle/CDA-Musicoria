@@ -28,9 +28,11 @@ class Produit
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     private ?string $slug = null;
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotBlank()]
     private ?string $image = null;
 
     #[ORM\Column]

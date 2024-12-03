@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Catégorie{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Modifier la catégorie </h1>
+
+        {{ form_start(form) }}
+        <div class="form-group">
+            {{ form_label(form.libelle) }}
+            {{ form_widget(form.libelle) }}
+            <div class="form-error">
+                {{ form_errors(form.libelle) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.parent) }}
+            {{ form_widget(form.parent) }}
+            <div class="form-error">
+                {{ form_errors(form.parent) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.image) }}
+            {{ form_widget(form.image) }}
+            <div class="form-error">
+                {{ form_errors(form.image) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.slug) }}
+            {{ form_widget(form.slug) }}
+            <div class="form-error">
+                {{ form_errors(form.slug) }}
+            </div>
+        </div>
+
+            {{ form_row(form.submit)}}
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}

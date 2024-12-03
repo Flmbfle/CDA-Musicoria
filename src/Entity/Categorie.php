@@ -6,8 +6,11 @@ use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
+#[UniqueEntity('libelle')]
 class Categorie
 {
     #[ORM\Id]
@@ -16,12 +19,16 @@ class Categorie
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $libelle = null;
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotBlank()]
     private ?string $image = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     private ?string $slug = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'categories')]
@@ -36,7 +43,7 @@ class Categorie
     /**
      * @var Collection<int, Produit>
      */
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie')]
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie', cascade: ['persist', 'remove'])]
     private Collection $produits;
 
     public function __construct()
@@ -93,10 +100,21 @@ class Categorie
 
     public function setParent(?self $parent): static
     {
+        // Vérification pour éviter que la catégorie ait un "grand-parent"
+        if ($parent && $parent->getParent()) {
+            throw new \LogicException('Une catégorie parente ne peut pas avoir de parent.');
+        }
+    
+        // Vérification pour empêcher une catégorie ayant des enfants de devenir une sous-catégorie
+        if ($parent && !$this->categories->isEmpty()) {
+            throw new \LogicException('Une catégorie ayant des sous-catégories ne peut pas devenir une sous-catégorie.');
+        }
+    
         $this->parent = $parent;
-
+    
         return $this;
     }
+    
 
     /**
      * @return Collection<int, self>

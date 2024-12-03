@@ -60,7 +60,6 @@ class ProduitType extends AbstractType
             ->add('slug', TextType::class, [
                 'attr' => [
                     'class' => 'form-control', // Ajout de la classe Bootstrap
-                    'rows' => 4, // Définir une hauteur (nombre de lignes visibles)
                 ]
             ])
             ->add('image', FileType::class, [

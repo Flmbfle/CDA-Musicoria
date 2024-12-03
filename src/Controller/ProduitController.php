@@ -49,6 +49,7 @@ class ProduitController extends AbstractController
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
+        dd($form);
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
@@ -72,8 +73,13 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    
     /**
+     * Cette fonction affiche un formulaire de modification de produit
+     * 
+     * @param Produit $produit
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
      * 
      */
     #[Route('/produit/modifier/{id}', 'modifier.produit', methods: ['GET','POST'])]
@@ -104,6 +110,11 @@ class ProduitController extends AbstractController
 
 
     /**
+     * Cette fonction permet de supprimer un produit
+     * 
+     * @param Produit $produit
+     * @param EntityManagerInterface $manager
+     * @return Response
      * 
      */
     #[Route('/produit/supprimer/{id}', 'supprimer.produit', methods: ['GET'])]
