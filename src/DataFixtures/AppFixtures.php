@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
             $manager->persist($fournisseur);
         }
 
-        for ($p = 0; $p < 25; $p++) {
+        for ($p = 0; $p < 40; $p++) {
             $produit = new Produit();
             $produit->setLibelle($this->faker->word)
                     ->setPrixAchat($pa = mt_rand(0, 1000))

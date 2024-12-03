@@ -27,7 +27,9 @@
         <main class="d-flex flex-column flex-fill bg-white shadow-lg align-items-center justify-content-center p-0 m-0 py-4">
             {% for messages in app.flashes %}
                 {% for message in messages %}
-                    <p>{{message|raw}}</p>
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
                 {% endfor %}
             {% endfor %}
             

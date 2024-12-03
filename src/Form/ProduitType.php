@@ -57,7 +57,12 @@ class ProduitType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('slug')
+            ->add('slug', TextType::class, [
+                'attr' => [
+                    'class' => 'form-control', // Ajout de la classe Bootstrap
+                    'rows' => 4, // Définir une hauteur (nombre de lignes visibles)
+                ]
+            ])
             ->add('image', FileType::class, [
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Image du produit',
@@ -68,6 +73,7 @@ class ProduitType extends AbstractType
                         'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG ou PNG).',
                     ]),
                 ],
+                'data_class' => null,
             ])
             ->add('stock', IntegerType::class, [
                 'attr' => ['class' => 'form-control'],
@@ -80,6 +86,12 @@ class ProduitType extends AbstractType
             ->add('active', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Produit actif',
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+                'label_attr' => [
+                    'class' => 'form-check-label'
+                ],
             ])
             ->add('prixAchat', MoneyType::class, [
                 'attr' => [

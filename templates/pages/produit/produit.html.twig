@@ -24,6 +24,11 @@
         </div>
     </section>
 
+    {# !!! Mettre en ADMIN only !!! #}
+    <section>
+        <a href="{{ path('nouveau.produit')}} class="btn btn-info"">Nouveau produit</a>
+    </section>
+
 
     <section id="productFilter" class="col-12 bg-li my-4 py-3 inner-shadow">
         <div class="col-10 mx-auto">
@@ -67,6 +72,11 @@
                                     <p class="card-text">{{ produit.prixVente }} €</p>
                                     <a href="#" class="btn bi bi-heart"></a>
                                     {# <a href="{{ path('panier_ajouter', {'id': produit.id}) }}" class="btn bi bi-cart-plus"></a> #}
+                                </div>
+                                {# A SUPPRIMER #}
+                                <div class="card-footer">
+                                    <a href="{{ path('modifier.produit', { id: produit.id })}}" class="btn btn-info">Modifier</a>
+                                    <a href="{{ path('supprimer.produit', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
                                 </div>
                             </div>
                         </div>

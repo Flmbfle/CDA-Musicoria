@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,8 +37,15 @@ class ProduitController extends AbstractController
         ]);
     }
 
+    /**
+     * Cette fonction affiche un formulaire de création de produit
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/produit/nouveau', name: 'nouveau.produit', methods:['POST', 'GET'])]
-    public function new(Request $request) : Response
+    public function new(Request $request , EntityManagerInterface $manager) : Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
@@ -45,11 +53,71 @@ class ProduitController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
-            dd($form->getData());
-        }
+            $produit = $form->getData();
 
+            $manager->persist($produit);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre produit à été ajouté avec succès !'
+            );
+
+            return $this->redirectToRoute('produit');
+        }
+        
+        // dd($produit);
         return $this->render('pages/produit/nouveau.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    
+    /**
+     * 
+     */
+    #[Route('/produit/modifier/{id}', 'modifier.produit', methods: ['GET','POST'])]
+    public function edit(Produit $produit, Request $request, EntityManagerInterface $manager) :  Response
+    {
+        $form = $this->createForm(ProduitType::class, $produit);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $produit = $form->getData();
+
+            $manager->persist($produit);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                'Votre produit à été modifié avec succès !'
+            );
+
+            return $this->redirectToRoute('produit');
+        }
+
+        return $this->render('pages/produit/modifier.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+
+    /**
+     * 
+     */
+    #[Route('/produit/supprimer/{id}', 'supprimer.produit', methods: ['GET'])]
+    public function delete(EntityManagerInterface $manager, Produit $produit) : Response
+    {
+
+        $manager->remove($produit);
+        $manager->flush();
+
+        $this->addFlash(
+            'success',
+            'Votre produit à été supprimé avec succès !'
+        );
+
+        return $this->redirectToRoute('produit');
     }
 }
