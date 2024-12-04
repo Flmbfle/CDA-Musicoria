@@ -27,7 +27,7 @@
 </section>
     {# !!! Mettre en ADMIN only !!! #}
     <section>
-        <a href="{{ path('nouveau.categorie')}}" class="btn btn-info">Nouvelle catégorie</a>
+        <a href="{{ path('categorie.nouveau')}}" class="btn btn-info">Nouvelle catégorie</a>
     </section>
 <section id="categorieList" class="categorie-list col-12">
     <div class="container col-10 mx-auto my-4">
@@ -47,8 +47,8 @@
                         </div>
                             {# A SUPPRIMER #}
                             <div>
-                                <a href="{{ path('modifier.categorie', { id: categorie.id })}}" class="btn btn-info">Modifier</a>
-                                <a href="{{ path('supprimer.categorie', { id: categorie.id })}}" class="btn btn-danger">Supprimer</a>
+                                <a href="{{ path('categorie.modifier', { id: categorie.id })}}" class="btn btn-info">Modifier</a>
+                                <a href="{{ path('categorie.supprimer', { id: categorie.id })}}" class="btn btn-danger">Supprimer</a>
                             </div>
                     </div>
                 {% endfor %}

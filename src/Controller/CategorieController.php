@@ -61,7 +61,7 @@ class CategorieController extends AbstractController
             throw $this->createNotFoundException('La catégorie demandée n\'existe pas.');
         }
 
-        // Récupérer les enfants de cette catégorie
+        // Récupérer les sousCatégorie
         $query = $categorieRepository->createQueryBuilder('c')
             ->where('c.parent = :parent')
             ->setParameter('parent', $parent)
@@ -80,7 +80,14 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/categorie/nouveau', name: 'nouveau.categorie', methods:['POST', 'GET'])]
+    /**
+     * Cette fonction affiche un formulaire de création de categorie
+     *
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/categorie/nouveau', name: 'categorie.nouveau', methods:['POST', 'GET'])]
     public function new(Request $request, EntityManagerInterface $manager): Response
     {
         $categorie = new Categorie();  // Nouvelle entité sans ID
@@ -89,13 +96,24 @@ class CategorieController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vous pouvez ici persister l'entité si vous le souhaitez plus tard
+            $categorie = $form->getData();
+
+            $manager->persist($categorie);
+            $manager->flush();
+            
+            $this->addFlash(
+                'success',
+                'Votre catégorie à été ajouté avec succès !'
+            );
+
+            return $this->redirectToRoute('categorie');
         }
     
         return $this->render('pages/categorie/nouveau.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
     /**
      * Cette fonction affiche un formulaire de modification de categorie
      * 
@@ -105,7 +123,7 @@ class CategorieController extends AbstractController
      * @return Response
      * 
      */
-    #[Route('/categorie/modifier/{id}', 'modifier.categorie', methods: ['GET','POST'])]
+    #[Route('/categorie/modifier/{id}', 'categorie.modifier', methods: ['GET','POST'])]
     public function edit(Categorie $categorie, Request $request, EntityManagerInterface $manager) :  Response
     {
         $form = $this->createForm(CategorieType::class, $categorie);
@@ -133,14 +151,14 @@ class CategorieController extends AbstractController
 
 
     /**
-     * Cette fonction permet de supprimer un categorie
+     * Cette fonction permet de supprimer une categorie
      * 
      * @param Categorie $categorie
      * @param EntityManagerInterface $manager
      * @return Response
      * 
      */
-    #[Route('/categorie/supprimer/{id}', 'supprimer.categorie', methods: ['GET'])]
+    #[Route('/categorie/supprimer/{id}', 'categorie.supprimer', methods: ['GET'])]
     public function delete(EntityManagerInterface $manager, Categorie $categorie) : Response
     {
 

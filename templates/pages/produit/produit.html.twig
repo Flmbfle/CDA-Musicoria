@@ -54,7 +54,7 @@
     </section>
     {# !!! Mettre en ADMIN only !!! #}
     <section>
-        <a href="{{ path('nouveau.produit')}}" class="btn btn-info">Nouveau produit</a>
+        <a href="{{ path('produit.nouveau')}}" class="btn btn-info">Nouveau produit</a>
     </section>
 
     <section id="productList" class="product-list col-12">
@@ -75,8 +75,8 @@
                                 </div>
                                 {# A SUPPRIMER #}
                                 <div class="card-footer">
-                                    <a href="{{ path('modifier.produit', { id: produit.id })}}" class="btn btn-info">Modifier</a>
-                                    <a href="{{ path('supprimer.produit', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
+                                    <a href="{{ path('produit.modifier', { id: produit.id })}}" class="btn btn-info">Modifier</a>
+                                    <a href="{{ path('produit.supprimer', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
                                 </div>
                             </div>
                         </div>

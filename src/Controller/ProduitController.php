@@ -44,7 +44,7 @@ class ProduitController extends AbstractController
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    #[Route('/produit/nouveau', name: 'nouveau.produit', methods:['POST', 'GET'])]
+    #[Route('/produit/nouveau', name: 'produit.nouveau', methods:['POST', 'GET'])]
     public function new(Request $request , EntityManagerInterface $manager) : Response
     {
         $produit = new Produit();
@@ -81,7 +81,7 @@ class ProduitController extends AbstractController
      * @return Response
      * 
      */
-    #[Route('/produit/modifier/{id}', 'modifier.produit', methods: ['GET','POST'])]
+    #[Route('/produit/modifier/{id}', 'produit.modifier', methods: ['GET','POST'])]
     public function edit(Produit $produit, Request $request, EntityManagerInterface $manager) :  Response
     {
         $form = $this->createForm(ProduitType::class, $produit);
@@ -116,7 +116,7 @@ class ProduitController extends AbstractController
      * @return Response
      * 
      */
-    #[Route('/produit/supprimer/{id}', 'supprimer.produit', methods: ['GET'])]
+    #[Route('/produit/supprimer/{id}', 'produit.supprimer', methods: ['GET'])]
     public function delete(EntityManagerInterface $manager, Produit $produit) : Response
     {
 

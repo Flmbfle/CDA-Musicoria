@@ -18,22 +18,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route('/connexion', name: 'security.login', methods: ['GET', 'POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
-
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
+        return $this->render('pages/security/login.html.twig', [
+            'last_username' => $authenticationUtils->getLastUsername(),
+            'error' => $authenticationUtils->getLastAuthenticationError()
         ]);
     }
 
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[Route(path: '/deconnexion', name: 'security.logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
@@ -80,7 +74,7 @@ class SecurityController extends AbstractController
                 );
 
                 $this->addFlash('success','Email envoyé avec succès');
-                return $this->redirectToRoute('app_login');
+                return $this->redirectToRoute('security.login');
 
             }
             // Utilisateur non récupere
@@ -120,7 +114,7 @@ class SecurityController extends AbstractController
                     $em->flush();
 
                     $this->addFlash('success','Mot de passe réinitialisé avec succès');
-                    return $this->redirectToRoute('app_login');
+                    return $this->redirectToRoute('security.login');
                 }
                 return $this->render('security/reset_password.html.twig',
                 [
@@ -129,6 +123,6 @@ class SecurityController extends AbstractController
             }
         }
         $this->addFlash('danger','Token invalide ou expiré');
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('security.login');
     }
 }

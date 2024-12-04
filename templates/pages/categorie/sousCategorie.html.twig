@@ -26,8 +26,8 @@
                             </div>
                         </div>
                         <div>
-                            <a href="{{ path('modifier.categorie', { id: categorie.id })}}" class="btn btn-info">Modifier</a>
-                            <a href="{{ path('supprimer.categorie', { id: categorie.id })}}" class="btn btn-danger">Supprimer</a>
+                            <a href="{{ path('categorie.modifier', { id: categorie.id })}}" class="btn btn-info">Modifier</a>
+                            <a href="{{ path('categorie.supprimer', { id: categorie.id })}}" class="btn btn-danger">Supprimer</a>
                         </div>
                     </div>
                 {% endfor %}
