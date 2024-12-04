@@ -51,7 +51,7 @@ class CategorieController extends AbstractController
      * @param string $slug
      * @return Response
      */
-    #[Route('/categories/{slug}', name: 'sousCategorie')]
+    #[Route('/categorie/{slug}', name: 'sousCategorie')]
     public function showChildren(CategorieRepository $categorieRepository, PaginatorInterface $paginator, Request $request, string $slug): Response
     {
         // Récupérer la catégorie parent en utilisant le slug

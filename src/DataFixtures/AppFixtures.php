@@ -2,16 +2,17 @@
 
 namespace App\DataFixtures;
 
+use Faker\Factory;
+use App\Entity\Role;
+use Faker\Generator;
+use App\Entity\Produit;
 use App\Entity\Categorie;
 use App\Entity\Fournisseur;
-use App\Entity\Produit;
-use App\Entity\Role;
 use App\Entity\Utilisateur;
 use App\Enum\TypeUtilisateur;
-use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
-use Faker\Generator;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -86,7 +87,7 @@ class AppFixtures extends Fixture
 
             // Génération des données
             $user->setEmail($this->faker->unique()->email())
-                ->setTypeUtilisateur([TypeUtilisateur::PARTICULIER])
+                ->setTypeUtilisateur($this->faker->randomElement([TypeUtilisateur::PARTICULIER, TypeUtilisateur::PROFESSIONNEL]))  // Correctement définir le type utilisateur
                 ->setNom($this->faker->lastName())
                 ->setPrenom($this->faker->firstName())
                 ->setRoles(['ROLE_CLIENT'])
@@ -103,7 +104,7 @@ class AppFixtures extends Fixture
 
         // Génération des données
         $user->setEmail('admin@musicoria.fr')
-            ->setTypeUtilisateur([TypeUtilisateur::PROFESSIONNEL])
+            ->setTypeUtilisateur($this->faker->randomElement([TypeUtilisateur::PARTICULIER, TypeUtilisateur::PROFESSIONNEL]))  // Correctement définir le type utilisateur
             ->setNom('admin')
             ->setPrenom('admin')
             ->setRoles(['ROLE_ADMIN'])

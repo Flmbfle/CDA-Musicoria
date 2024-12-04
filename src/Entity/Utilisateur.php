@@ -35,8 +35,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, enumType: TypeUtilisateur::class)]
-    private array $typeUtilisateur = [];
+    #[ORM\Column(type: 'string', enumType: TypeUtilisateur::class)]
+    private ?TypeUtilisateur $typeUtilisateur = null;
+    
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
@@ -153,18 +154,15 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    /**
-     * @return TypeUtilisateur[]
-     */
-    public function getTypeUtilisateur(): array
+    public function getTypeUtilisateur(): ?TypeUtilisateur
     {
         return $this->typeUtilisateur;
     }
-
-    public function setTypeUtilisateur(array $typeUtilisateur): static
+    
+    public function setTypeUtilisateur(TypeUtilisateur $typeUtilisateur): self
     {
         $this->typeUtilisateur = $typeUtilisateur;
-
+    
         return $this;
     }
 

@@ -7,7 +7,7 @@
         <div class="row col-12 px-3 align-items-center">
             <!-- Colonne du logo -->
             <div class="col-2">
-                <a href="{{ path('app_main') }}" class="d-none d-lg-block">
+                <a href="{{ path('accueil') }}" class="d-none d-lg-block">
                     <img src="{{ asset('/assets/images/logo.png')}}" class="img-fluid" alt="Logo">
                 </a>
             </div>
@@ -31,7 +31,7 @@
                     </li>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <li class="nav-item ">
-                            {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_profil' %}active{% endif %}" href="{{ path('app_profil') }}">Profil</a> #}
+                            <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'profil-' %}active{% endif %}" href="{{ path('profil') }}">Profil</a>
                         </li>
                         {% else %}
                         <li class="nav-item ">
