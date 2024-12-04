@@ -59,7 +59,7 @@ class Role
     {
         if (!$this->utilisateurs->contains($utilisateur)) {
             $this->utilisateurs->add($utilisateur);
-            $utilisateur->setRole($this);
+            $utilisateur->setRoles(['ROLE_CLIENT']);
         }
 
         return $this;
@@ -70,7 +70,7 @@ class Role
         if ($this->utilisateurs->removeElement($utilisateur)) {
             // set the owning side to null (unless already changed)
             if ($utilisateur->getRoles() === $this) {
-                $utilisateur->setRole(null);
+                $utilisateur->setRoles(['']);
             }
         }
 

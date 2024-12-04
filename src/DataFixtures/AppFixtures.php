@@ -5,10 +5,14 @@ namespace App\DataFixtures;
 use App\Entity\Categorie;
 use App\Entity\Fournisseur;
 use App\Entity\Produit;
+use App\Entity\Role;
+use App\Entity\Utilisateur;
+use App\Enum\TypeUtilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
@@ -27,7 +31,8 @@ class AppFixtures extends Fixture
         $categories = [];
     
         // CATEGORIES
-        for ($c = 0; $c < 10; $c++) {
+        for ($c = 0; $c < 10; $c++) 
+        {
             $categorie = new Categorie();
             $categorie->setLibelle('Categorie ' . $this->faker->word)
                 ->setImage($this->faker->imageUrl(640, 480, 'music', true))
@@ -47,7 +52,8 @@ class AppFixtures extends Fixture
     
         // FOURNISSEURS
         $fournisseurs = [];
-        for ($f = 0; $f < 10; $f++) {
+        for ($f = 0; $f < 10; $f++) 
+        {
             $fournisseur = new Fournisseur();
             $fournisseur->setNom('Fournisseur ' . $this->faker->word)
                 ->setEmail($this->faker->email)
@@ -58,7 +64,8 @@ class AppFixtures extends Fixture
         }
     
         // PRODUITS
-        for ($p = 0; $p < 40; $p++) {
+        for ($p = 0; $p < 60; $p++) 
+        {
             $produit = new Produit();
             $produit->setLibelle($this->faker->word)
                 ->setPrixAchat($pa = mt_rand(10, 500))
@@ -73,6 +80,41 @@ class AppFixtures extends Fixture
             $manager->persist($produit);
         }
     
+        // UTILISATEUR
+        for ($u = 0; $u < 10; $u++) {
+            $user = new Utilisateur();
+
+            // Génération des données
+            $user->setEmail($this->faker->unique()->email())
+                ->setTypeUtilisateur([TypeUtilisateur::PARTICULIER])
+                ->setNom($this->faker->lastName())
+                ->setPrenom($this->faker->firstName())
+                ->setRoles(['ROLE_CLIENT'])
+                ->setTelephone($this->faker->phoneNumber())
+                ->setCoefficient($this->faker->randomFloat(2, 1, 5)) // Coefficient entre 1.00 et 5.00
+                ->setAdresse($this->faker->address())
+                ->setVerified($this->faker->boolean())
+                ->setPlainPassword('password');
+
+            $manager->persist($user);
+        }
+
+        $user = new Utilisateur();
+
+        // Génération des données
+        $user->setEmail('admin@musicoria.fr')
+            ->setTypeUtilisateur([TypeUtilisateur::PROFESSIONNEL])
+            ->setNom('admin')
+            ->setPrenom('admin')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setTelephone($this->faker->phoneNumber())
+            ->setCoefficient($this->faker->randomFloat(2, 1, 5)) // Coefficient entre 1.00 et 5.00
+            ->setAdresse($this->faker->address())
+            ->setVerified(true)
+            ->setPlainPassword('admin');
+
+        $manager->persist($user);
+        
         $manager->flush();
     }
     

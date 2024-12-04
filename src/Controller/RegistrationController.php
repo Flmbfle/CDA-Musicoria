@@ -26,70 +26,70 @@ class RegistrationController extends AbstractController
     {
     }
 
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, JWTService $jwt, SendEmailService $email): Response
-    {
-        $user = new Utilisateur();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+    // #[Route('/register', name: 'app_register')]
+    // public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, JWTService $jwt, SendEmailService $email): Response
+    // {
+    //     $user = new Utilisateur();
+    //     $form = $this->createForm(RegistrationFormType::class, $user);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
-            $plainPassword = $form->get('plainPassword')->getData();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         /** @var string $plainPassword */
+    //         $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+    //         // encode the plain password
+    //         $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            // // Récupérer le rôle "CLIENT" depuis la base de données
-            $role = $entityManager->getRepository(Role::class)->findOneBy(['nom' => 'ROLE_CLIENT']);
-                if ($role) {
-                    // Assigner le rôle à l'utilisateur
-                    $user->setRole($role);
-                } else {
-                    // Optionnel : Gérer le cas où le rôle n'existe pas
-                    throw new \Exception('Le rôle CLIENT n\'existe pas dans la base de données.');
-                }
-            // dd($user);
-            $entityManager->persist($user);
-            $entityManager->flush();
+    //         // // Récupérer le rôle "CLIENT" depuis la base de données
+    //         $role = $entityManager->getRepository(Role::class)->findOneBy(['nom' => 'ROLE_CLIENT']);
+    //             if ($role) {
+    //                 // Assigner le rôle à l'utilisateur
+    //                 $user->setRoles(['ROLE_CLIENT']);
+    //             } else {
+    //                 // Optionnel : Gérer le cas où le rôle n'existe pas
+    //                 throw new \Exception('Le rôle CLIENT n\'existe pas dans la base de données.');
+    //             }
+    //         // dd($user);
+    //         $entityManager->persist($user);
+    //         $entityManager->flush();
 
-            // Generer un Token
-            // Header
-            $header = [
-                'typ'=> 'JWT',
-                'alg'=> 'HS256'
-            ];
+    //         // Generer un Token
+    //         // Header
+    //         $header = [
+    //             'typ'=> 'JWT',
+    //             'alg'=> 'HS256'
+    //         ];
 
-            // Payload
-            $payload = [
-                'user_id' => $user->getId(),
-            ];
-            // On encode en base64
-            // $base64Header = base64_encode(json_encode($header));
+    //         // Payload
+    //         $payload = [
+    //             'user_id' => $user->getId(),
+    //         ];
+    //         // On encode en base64
+    //         // $base64Header = base64_encode(json_encode($header));
 
-            // On génère le Token
-            $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+    //         // On génère le Token
+    //         $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
 
-            // Envoyer le mail
+    //         // Envoyer le mail
 
-            $email->send(
-                'no-reply@musicoria.fr',
-                $user->getEmail(),
-                'Activation de votre compte Musicoria',
-                'register',
-                compact('user', 'token'),
-            );
+    //         $email->send(
+    //             'no-reply@musicoria.fr',
+    //             $user->getEmail(),
+    //             'Activation de votre compte Musicoria',
+    //             'register',
+    //             compact('user', 'token'),
+    //         );
 
 
-            $this->addFlash('success','Utilisateur inscrit, veuillez cliquer sur le lien reçu pour confirmer votre adresse email.');
+    //         $this->addFlash('success','Utilisateur inscrit, veuillez cliquer sur le lien reçu pour confirmer votre adresse email.');
 
-            return $this->redirectToRoute('app_main');
-        }
+    //         return $this->redirectToRoute('app_main');
+    //     }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
-        ]);
-    }
+    //     return $this->render('registration/register.html.twig', [
+    //         'registrationForm' => $form,
+    //     ]);
+    // }
 
     #[Route('/verify/{{token}}', name: 'app_verify_user')]
     public function verifyUserEmail($token, JWTService $jwt, UtilisateurRepository $utilisateurRepository , EntityManagerInterface $em): Response
@@ -113,6 +113,6 @@ class RegistrationController extends AbstractController
             }
         }
         $this->addFlash('danger','Token invalide ou expiré');
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('security.login');
     }
 }

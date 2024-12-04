@@ -11,10 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UtilisateurRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Il y a déjà un compte associé à cet email')]
+#[ORM\EntityListeners(['App\EntityListener\UserListener'])]
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -23,13 +25,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\Email()]
+    #[Assert\Length(min: 2, max: 180)]
     private ?string $email = null;
-
-    /**
-     * @var list<string> The user roles
-     */
-    #[ORM\Column]
-    private array $roles = [];
 
     /**
      * @var string The hashed password
@@ -41,21 +39,28 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private array $typeUtilisateur = [];
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min: 2, max: 50)]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Length(min: 10, max: 20)]
     private ?string $telephone = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $coefficient = null;
 
-    #[ORM\ManyToOne(inversedBy: 'utilisateurs')]
-    private ?Role $Role = null;
+    #[ORM\Column(type: 'json')]
+    #[Assert\NotNull()]
+    private array $roles = [];
 
     #[ORM\Column(length: 500)]
+    #[Assert\NotNull()]
     private ?string $adresse = null;
 
     /**
@@ -65,10 +70,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $commande;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
+    #[Assert\NotNull()]
     private ?\DateTimeImmutable $date_inscription = null;
 
     #[ORM\Column]
     private bool $isVerified = false;
+
+    private ?string $plainPassword = null;
 
     public function __construct()
     {
@@ -105,29 +113,18 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @see UserInterface
-     *
-     * @return list<string>
      */
     public function getRoles(): array
     {
-        $roles = [];
-
-        // Ajoute le rôle associé
-        if ($this->Role) {
-            $roles[] = $this->Role->getNom(); // Assure-toi que l'entité Role a une méthode getName()
-        }
-        // Ajoute un rôle par défaut
-        $roles[] = 'ROLE_CLIENT';
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRole(Role $role = null): static
+    public function setRoles(array $roles): self
     {
-        $this->Role = $role;
+        $this->roles = $roles;
 
         return $this;
     }
@@ -284,4 +281,25 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * Get the value of plainPassword
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set the value of plainPassword
+     *
+     * @return  self
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
 }
