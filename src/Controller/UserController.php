@@ -75,22 +75,38 @@ class UserController extends AbstractController
         ]);
     }
 
-
+    /**
+     * Cette fonction nous permet de modifier le mot de passe de l'utilisateur
+     * 
+     * @param Utilisateur $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param UserPasswordHasherInterface $hasher
+     * @return Response
+     */
     #[Route('/profil/reinitialisation-mot-de-passe/{id}', 'profil.modifier.password')]
     public function resetPassword(Utilisateur $user, Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $manager): Response
     {
+        if(!$this->getUser())
+        {
+            return $this->redirectToRoute('security.login');
+        }
+
+        if($this->getUser() !== $user)
+        {
+            return $this->redirectToRoute('accueil');
+        }
+
         $form = $this->createForm(ResetPasswordType::class);
 
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
-            if ($hasher->isPasswordValid($user, $form->get('plainPassword')->getData())) {
-                $hashedPassword = $hasher->hashPassword(
-                    $user,
-                    $form->get('newPassword')->getData()
+            if ($hasher->isPasswordValid($user, $form->getData()['plainPassword'])) {
+                $user->setUpdatedAt(new \DateTimeImmutable());
+                $user->setPlainPassword(
+                    $form->getData()['newPassword']
                 );
-            
-                $user->setPassword($hashedPassword); // Assurez-vous que cette méthode existe dans l'entité Utilisateur.
             
                 $this->addFlash(
                     'success',
