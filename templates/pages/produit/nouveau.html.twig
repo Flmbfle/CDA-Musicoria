@@ -3,94 +3,93 @@
 {% block title %}Nouveau Produit{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <section>
         <h1>Ajout d'un nouveau produit</h1>
-
         {{ form_start(form) }}
-        <div class="form-group">
-            {{ form_label(form.libelle) }}
-            {{ form_widget(form.libelle) }}
-            <div class="form-error">
-                {{ form_errors(form.libelle) }}
+    
+            <div class="form-group">
+                {{ form_label(form.libelle) }}
+                {{ form_widget(form.libelle) }}
+                <div class="form-error">
+                    {{ form_errors(form.libelle) }}
+                </div>
             </div>
-        </div>
-
-                <div class="form-group">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-            <div class="form-error">
-                {{ form_errors(form.description) }}
+    
+            <div class="form-group">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                <div class="form-error">
+                    {{ form_errors(form.description) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.categorie) }}
-            {{ form_widget(form.categorie) }}
-            <div class="form-error">
-                {{ form_errors(form.categorie) }}
+    
+            <div class="form-group">
+                {{ form_label(form.categorie) }}
+                {{ form_widget(form.categorie) }}
+                <div class="form-error">
+                    {{ form_errors(form.categorie) }}
+                </div>
             </div>
-        </div>
-
-                <div class="form-group">
-            {{ form_label(form.fournisseur) }}
-            {{ form_widget(form.fournisseur) }}
-            <div class="form-error">
-                {{ form_errors(form.fournisseur) }}
+    
+            <div class="form-group">
+                {{ form_label(form.fournisseur) }}
+                {{ form_widget(form.fournisseur) }}
+                <div class="form-error">
+                    {{ form_errors(form.fournisseur) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.prixAchat) }}
-            {{ form_widget(form.prixAchat) }}
-            <div class="form-error">
-                {{ form_errors(form.prixAchat) }}
+    
+            <div class="form-group">
+                {{ form_label(form.prixAchat) }}
+                {{ form_widget(form.prixAchat) }}
+                <div class="form-error">
+                    {{ form_errors(form.prixAchat) }}
+                </div>
             </div>
-        </div>
-
-                <div class="form-group">
-            {{ form_label(form.prixVente) }}
-            {{ form_widget(form.prixVente) }}
-            <div class="form-error">
-                {{ form_errors(form.prixVente) }}
+    
+            <div class="form-group">
+                {{ form_label(form.prixVente) }}
+                {{ form_widget(form.prixVente) }}
+                <div class="form-error">
+                    {{ form_errors(form.prixVente) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.image) }}
-            {{ form_widget(form.image) }}
-            <div class="form-error">
-                {{ form_errors(form.image) }}
+    
+            <div class="form-group">
+                {{ form_label(form.image) }}
+                {{ form_widget(form.image) }}
+                <div class="form-error">
+                    {{ form_errors(form.image) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.stock) }}
-            {{ form_widget(form.stock) }}
-            <div class="form-error">
-                {{ form_errors(form.stock) }}
+    
+            <div class="form-group">
+                {{ form_label(form.stock) }}
+                {{ form_widget(form.stock) }}
+                <div class="form-error">
+                    {{ form_errors(form.stock) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.slug) }}
-            {{ form_widget(form.slug) }}
-            <div class="form-error">
-                {{ form_errors(form.slug) }}
+    
+            <div class="form-group">
+                {{ form_label(form.slug) }}
+                {{ form_widget(form.slug) }}
+                <div class="form-error">
+                    {{ form_errors(form.slug) }}
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.active) }}
-            <div class="form-switch">
-                {{ form_widget(form.active) }}
+    
+            <div class="form-group">
+                {{ form_label(form.active) }}
+                <div class="form-switch">
+                    {{ form_widget(form.active) }}
+                </div>
+                <div class="form-error">
+                    {{ form_errors(form.active) }}
+                </div>
             </div>
-            <div class="form-error">
-                {{ form_errors(form.active) }}
-            </div>
-        </div>
-
+    
             {{ form_row(form.submit)}}
         {{ form_end(form) }}
-
-    </div>
+    </section>
 {% endblock %}

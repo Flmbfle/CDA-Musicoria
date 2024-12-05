@@ -3,25 +3,26 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-
-    <h1>Formulaire d'inscription</h1>
-
-    {# {{ form_errors(form) }}
-
-    {{ form_start(form) }}
-        {{ form_row(form.email) }}
-        {{ form_row(form.nom) }}
-        {{ form_row(form.prenom) }}
-        {{ form_row(form.adresse)}}
-        {{ form_row(form.telephone) }}
-        {{ form_row(form.plainPassword) }}
-
-    {{ form_end(form) }} #}
-    {{ form(form)}}
-
+    <section>
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
     
-    <p>Vous avez déjà un compte ? <a href="{{ path('security.login') }}">Connectez-vous</a></p>
+        <h1>Formulaire d'inscription</h1>
+    
+        {# {{ form_errors(form) }}
+    
+        {{ form_start(form) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.prenom) }}
+            {{ form_row(form.adresse)}}
+            {{ form_row(form.telephone) }}
+            {{ form_row(form.plainPassword) }}
+    
+        {{ form_end(form) }} #}
+        {{ form(form)}}
+        
+        <p>Vous avez déjà un compte ? <a href="{{ path('security.login') }}">Connectez-vous</a></p>
+    </section>
 {% endblock %}

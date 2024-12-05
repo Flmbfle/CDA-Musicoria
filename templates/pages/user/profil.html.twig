@@ -3,17 +3,18 @@
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
-
-        {% for message in app.flashes ('success') %}
-            <div class="alert alert-success" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-
-        <div class="mb-3 text-center">
-            Vous êtes connecté(e) en tant que {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Me déconnecter</a>
+<section>
+    {% for message in app.flashes ('success') %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
         </div>
-        {% if is_granted('ROLE_ADMIN') %}
-            {# <a href="{{ path ('admin')}}">Gérer</a> #}
-        {% endif %}
+    {% endfor %}
+
+    <div class="mb-3 text-center">
+        Vous êtes connecté(e) en tant que {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Me déconnecter</a>
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        {# <a href="{{ path ('admin')}}">Gérer</a> #}
+    {% endif %}
+</section>
 {% endblock %}
