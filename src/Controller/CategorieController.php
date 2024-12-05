@@ -42,6 +42,40 @@ class CategorieController extends AbstractController
         ]);
     }
 
+        /**
+     * Cette fonction affiche un formulaire de création de categorie
+     *
+     * @param EntityManagerInterface $manager
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/categorie/nouveau', name: 'categorie.nouveau', methods:['POST', 'GET'])]
+    public function new(Request $request, EntityManagerInterface $manager): Response
+    {
+        $categorie = new Categorie();  // Nouvelle entité sans ID
+        $form = $this->createForm(CategorieType::class, $categorie);
+        
+        $form->handleRequest($request);
+    
+        if ($form->isSubmitted() && $form->isValid()) {
+            $categorie = $form->getData();
+
+            $manager->persist($categorie);
+            $manager->flush();
+            
+            $this->addFlash(
+                'success',
+                'Votre catégorie à été ajouté avec succès !'
+            );
+
+            return $this->redirectToRoute('categorie');
+        }
+    
+        return $this->render('pages/categorie/nouveau.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     /**
      * Cette fonction affiche toute les sousCategories
      *
@@ -77,40 +111,6 @@ class CategorieController extends AbstractController
         return $this->render('pages/categorie/sousCategorie.html.twig', [
             'parent' => $parent,
             'sousCategorie' => $sousCategorie,
-        ]);
-    }
-
-    /**
-     * Cette fonction affiche un formulaire de création de categorie
-     *
-     * @param EntityManagerInterface $manager
-     * @param Request $request
-     * @return Response
-     */
-    #[Route('/categorie/nouveau', name: 'categorie.nouveau', methods:['POST', 'GET'])]
-    public function new(Request $request, EntityManagerInterface $manager): Response
-    {
-        $categorie = new Categorie();  // Nouvelle entité sans ID
-        $form = $this->createForm(CategorieType::class, $categorie);
-        
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            $categorie = $form->getData();
-
-            $manager->persist($categorie);
-            $manager->flush();
-            
-            $this->addFlash(
-                'success',
-                'Votre catégorie à été ajouté avec succès !'
-            );
-
-            return $this->redirectToRoute('categorie');
-        }
-    
-        return $this->render('pages/categorie/nouveau.html.twig', [
-            'form' => $form->createView(),
         ]);
     }
 

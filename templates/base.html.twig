@@ -26,13 +26,13 @@
         
         <main class="d-flex flex-column flex-fill bg-white shadow-lg align-items-center justify-content-center p-0 m-0">
             <div class="container">
-                {% for messages in app.flashes %}
+                {# {% for messages in app.flashes %}
                     {% for message in messages %}
                         <div class="alert alert-success" role="alert">
                             {{ message }}
                         </div>
                     {% endfor %}
-                {% endfor %}
+                {% endfor %} #}
                 
                 {% block body %}
                 {% endblock %}

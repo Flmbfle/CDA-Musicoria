@@ -3,18 +3,16 @@
 namespace App\Form;
 
 use App\Entity\Utilisateur;
-use App\Enum\TypeUtilisateur;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\HttpFoundation\Response;
 
 class UtilisateurType extends AbstractType
 {
@@ -109,6 +107,15 @@ class UtilisateurType extends AbstractType
                 ]
             ])
 
+            ->add('plainPassword', PasswordType::class, [
+                'label' => 'Mot de passe',
+                'label_attr' => [
+                    'class' => 'form-label'
+                ],
+                'attr' => [
+                    'class' => 'form-control',
+                ],
+            ])
             
             ->add('submit', SubmitType::class, [
                 'attr' => [

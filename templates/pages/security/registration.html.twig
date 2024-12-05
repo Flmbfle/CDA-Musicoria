@@ -9,7 +9,7 @@
 
     <h1>Formulaire d'inscription</h1>
 
-    {{ form_errors(form) }}
+    {# {{ form_errors(form) }}
 
     {{ form_start(form) }}
         {{ form_row(form.email) }}
@@ -17,10 +17,11 @@
         {{ form_row(form.prenom) }}
         {{ form_row(form.adresse)}}
         {{ form_row(form.telephone) }}
-        {{ form_row(form.plainPassword, {
-            label: 'Password'
-        }) }}
+        {{ form_row(form.plainPassword) }}
 
-    {{ form_end(form) }}
+    {{ form_end(form) }} #}
+    {{ form(form)}}
+
+    
     <p>Vous avez déjà un compte ? <a href="{{ path('security.login') }}">Connectez-vous</a></p>
 {% endblock %}

@@ -3,6 +3,13 @@
 {% block title %}Mon compte{% endblock %}
 
 {% block body %}
+
+        {% for message in app.flashes ('success') %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <div class="mb-3 text-center">
             Vous êtes connecté(e) en tant que {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Me déconnecter</a>
         </div>

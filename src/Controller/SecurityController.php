@@ -3,20 +3,20 @@
 namespace App\Controller;
 
 use App\Entity\Utilisateur;
-use App\Form\RegistrationType;
-use App\Form\ResetPasswordFormType;
-use App\Form\ResetPasswordRequestFormType;
-use App\Repository\UtilisateurRepository;
 use App\Service\JWTService;
+use App\Form\RegistrationType;
+use App\Form\ResetPasswordType;
 use App\Service\SendEmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\UtilisateurRepository;
+use App\Form\ResetPasswordRequestFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
@@ -152,7 +152,7 @@ class SecurityController extends AbstractController
 
             if($user) 
             {
-                $form = $this->createForm(ResetPasswordFormType::class);
+                $form = $this->createForm(ResetPasswordType::class);
                 $form->handleRequest($request);
 
                 if ($form->isSubmitted() && $form->isValid())
