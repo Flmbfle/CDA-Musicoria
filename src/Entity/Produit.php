@@ -51,12 +51,6 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Categorie $categorie = null;
 
-    /**
-     * @var Collection<int, LigneCommande>
-     */
-    #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'produit')]
-    private Collection $ligneCommandes;
-
     #[ORM\Column]
     #[Assert\Positive()]
     #[Assert\NotNull()]
@@ -73,7 +67,6 @@ class Produit
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->ligneCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,36 +178,6 @@ class Produit
     public function setcategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, LigneCommande>
-     */
-    public function getLigneCommandes(): Collection
-    {
-        return $this->ligneCommandes;
-    }
-
-    public function addLigneCommande(LigneCommande $ligneCommande): static
-    {
-        if (!$this->ligneCommandes->contains($ligneCommande)) {
-            $this->ligneCommandes->add($ligneCommande);
-            $ligneCommande->setProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLigneCommande(LigneCommande $ligneCommande): static
-    {
-        if ($this->ligneCommandes->removeElement($ligneCommande)) {
-            // set the owning side to null (unless already changed)
-            if ($ligneCommande->getProduit() === $this) {
-                $ligneCommande->setProduit(null);
-            }
-        }
 
         return $this;
     }

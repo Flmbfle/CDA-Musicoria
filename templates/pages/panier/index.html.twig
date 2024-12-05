@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Musicoria - Produits{% endblock %}
+
+{% block body %}
+<section>
+    <h1>Votre Panier</h1>
+    <div class="table-responsive">
+        <table class="table table-striped text-center align-middle table-light border border-dark my-3">
+            <thead>
+                <tr>
+                    <th class="col p-3">Image</th>
+                    <th class="col p-3">Produit</th>
+                    <th class="col p-3">Prix unitaire</th>
+                    <th class="col-2 p-3">Quantité</th>
+                    <th class="col p-3">Total HT</th>
+                    <th class="col p-3">Total TTC</th>
+                    <th class="col p-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                    <tr>
+                        <td class="p-3">
+                            <img src="{{ asset('/assets/images/produit/' ~ item.produit.image) }}" alt="{{ item.produit.libelle }}" class="img-thumbnail" style="width: 120px; height: 120px;">
+                        </td>
+                        <td>{{ item.produit.libelle }}</td>
+                        <td>{{ item.produit.prixVente | number_format(2, ',', ' ') }} €</td>
+                        <td>
+                            <div class="d-flex align-items-center justify-content-center input-group">
+                                <a href="{{ path('panier.reduire', {'id': item.produit.id}) }}" class="col bi bi-dash-lg btn btn-outline-dark mx-2"></a>
+                                <span class="px-3 py-2 col ">{{ item.quantite }}</span>
+                                <a href="{{ path('panier.ajouter', {'id': item.produit.id}) }}" class="col bi bi-plus-lg btn btn-outline-dark mx-2"></a>
+                            </div>
+                        </td>
+                        <td>{{ (item.produit.prixVente * item.quantite) | number_format(2, ',', ' ') }} €</td>
+                        <td>{{ (item.produit.prixVente * item.quantite * 1.20) | number_format(2, ',', ' ') }} €</td>
+                        <td>
+                            <div class="d-flex justify-content-center">
+                                <a href="{{ path('panier.supprimer', {'id': item.produit.id}) }}" class="bi bi-x-circle btn btn-outline-dark mx-2" title="Suppression rapide"></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7">Votre panier est vide</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5"></td>
+                    <td>{{ (total * 1.20) | number_format(2, ',', ' ') }}</td>
+                    <td>
+                        <a href="{{ path('panier.vider')}}" class="btn btn-outline-danger bi bi-trash"></a>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</section>
+{% endblock %}

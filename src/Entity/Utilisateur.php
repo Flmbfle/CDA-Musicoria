@@ -64,12 +64,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private ?string $adresse = null;
 
-    /**
-     * @var Collection<int, Commande>
-     */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'utilisateur')]
-    private Collection $commande;
-
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $date_inscription = null;
@@ -82,9 +76,14 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    private ?Panier $panier = null;
+
+    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
+    private ?Commande $commande = null;
+
     public function __construct()
     {
-        $this->commande = new ArrayCollection();
         $this->date_inscription = new \DateTimeImmutable();
     }
 
@@ -121,7 +120,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_CLIENT';
 
         return array_unique($roles);
     }
@@ -241,36 +240,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getCommande(): Collection
-    {
-        return $this->commande;
-    }
-
-    public function addCommande(Commande $commande): static
-    {
-        if (!$this->commande->contains($commande)) {
-            $this->commande->add($commande);
-            $commande->setUtilisateur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): static
-    {
-        if ($this->commande->removeElement($commande)) {
-            // set the owning side to null (unless already changed)
-            if ($commande->getUtilisateur() === $this) {
-                $commande->setUtilisateur(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function isVerified(): bool
     {
         return $this->isVerified;
@@ -311,6 +280,50 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getPanier(): ?Panier
+    {
+        return $this->panier;
+    }
+
+    public function setPanier(?Panier $panier): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($panier === null && $this->panier !== null) {
+            $this->panier->setUtilisateur(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($panier !== null && $panier->getUtilisateur() !== $this) {
+            $panier->setUtilisateur($this);
+        }
+
+        $this->panier = $panier;
+
+        return $this;
+    }
+
+    public function getCommande(): ?Commande
+    {
+        return $this->commande;
+    }
+
+    public function setCommande(?Commande $commande): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($commande === null && $this->commande !== null) {
+            $this->commande->setUtilisateur(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($commande !== null && $commande->getUtilisateur() !== $this) {
+            $commande->setUtilisateur($this);
+        }
+
+        $this->commande = $commande;
 
         return $this;
     }

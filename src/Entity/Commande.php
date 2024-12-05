@@ -4,11 +4,7 @@ namespace App\Entity;
 
 use App\Enum\StatutCommande;
 use App\Repository\CommandeRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -18,98 +14,27 @@ class Commande
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $dateCommande = null;
-
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, enumType: StatutCommande::class)]
-    private array $statut = [];
-
-    /**
-     * @var Collection<int, LigneCommande>
-     */
-    #[ORM\OneToMany(targetEntity: LigneCommande::class, mappedBy: 'commande')]
-    private Collection $ligneCommandes;
-
-    #[ORM\ManyToOne(inversedBy: 'commande')]
+    #[ORM\OneToOne(inversedBy: 'commande', cascade: ['persist', 'remove'])]
     private ?Utilisateur $utilisateur = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $remise = null;
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Panier $panier = null;
 
     #[ORM\Column]
-    #[Assert\NotNull()]
-    private ?float $totalTtc = null;
+    private ?float $prixHT = null;
 
     #[ORM\Column]
-    #[Assert\NotNull()]
-    private ?float $totalHt = null;
+    private ?float $prixTTC = null;
 
-    public function __construct()
-    {
-        $this->dateCommande = new \DateTimeImmutable();
-        $this->ligneCommandes = new ArrayCollection();
-    }
+    #[ORM\Column(enumType: StatutCommande::class)]
+    private ?StatutCommande $status = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDateCommande(): ?\DateTimeImmutable
-    {
-        return $this->dateCommande;
-    }
-
-    public function setDateCommande(\DateTimeImmutable $dateCommande): static
-    {
-        $this->dateCommande = $dateCommande;
-
-        return $this;
-    }
-
-    /**
-     * @return Commande[]
-     */
-    public function getStatut(): array
-    {
-        return $this->statut;
-    }
-
-    public function setStatut(array $statut): static
-    {
-        $this->statut = $statut;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, LigneCommande>
-     */
-    public function getLigneCommandes(): Collection
-    {
-        return $this->ligneCommandes;
-    }
-
-    public function addLigneCommande(LigneCommande $ligneCommande): static
-    {
-        if (!$this->ligneCommandes->contains($ligneCommande)) {
-            $this->ligneCommandes->add($ligneCommande);
-            $ligneCommande->setcommande($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLigneCommande(LigneCommande $ligneCommande): static
-    {
-        if ($this->ligneCommandes->removeElement($ligneCommande)) {
-            // set the owning side to null (unless already changed)
-            if ($ligneCommande->getcommande() === $this) {
-                $ligneCommande->setcommande(null);
-            }
-        }
-
-        return $this;
     }
 
     public function getUtilisateur(): ?Utilisateur
@@ -124,38 +49,62 @@ class Commande
         return $this;
     }
 
-    public function getRemise(): ?float
+    public function getPanier(): ?Panier
     {
-        return $this->remise;
+        return $this->panier;
     }
 
-    public function setRemise(?float $remise): static
+    public function setPanier(?Panier $panier): static
     {
-        $this->remise = $remise;
+        $this->panier = $panier;
 
         return $this;
     }
 
-    public function getTotalTtc(): ?float
+    public function getPrixHT(): ?float
     {
-        return $this->totalTtc;
+        return $this->prixHT;
     }
 
-    public function setTotalTtc(float $totalTtc): static
+    public function setPrixHT(float $prixHT): static
     {
-        $this->totalTtc = $totalTtc;
+        $this->prixHT = $prixHT;
 
         return $this;
     }
 
-    public function getTotalHt(): ?float
+    public function getPrixTTC(): ?float
     {
-        return $this->totalHt;
+        return $this->prixTTC;
     }
 
-    public function setTotalHt(float $totalHt): static
+    public function setPrixTTC(float $prixTTC): static
     {
-        $this->totalHt = $totalHt;
+        $this->prixTTC = $prixTTC;
+
+        return $this;
+    }
+
+    public function getStatus(): ?StatutCommande
+    {
+        return $this->status;
+    }
+
+    public function setStatus(StatutCommande $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
