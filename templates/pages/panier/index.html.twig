@@ -12,8 +12,8 @@
                     <th class="col p-3">Image</th>
                     <th class="col p-3">Produit</th>
                     <th class="col p-3">Prix unitaire</th>
+                    <th class="col p-3">Prix TTC</th>
                     <th class="col-2 p-3">Quantité</th>
-                    <th class="col p-3">Total HT</th>
                     <th class="col p-3">Total TTC</th>
                     <th class="col p-3">Actions</th>
                 </tr>
@@ -26,6 +26,7 @@
                         </td>
                         <td>{{ item.produit.libelle }}</td>
                         <td>{{ item.produit.prixVente | number_format(2, ',', ' ') }} €</td>
+                        <td>{{ (item.produit.prixVente * (1 + 0.20)) | number_format(2, ',', ' ') }} €</td> <!-- Prix TTC -->
                         <td>
                             <div class="d-flex align-items-center justify-content-center input-group">
                                 <a href="{{ path('panier.reduire', {'id': item.produit.id}) }}" class="col bi bi-dash-lg btn btn-outline-dark mx-2"></a>
@@ -33,8 +34,7 @@
                                 <a href="{{ path('panier.ajouter', {'id': item.produit.id}) }}" class="col bi bi-plus-lg btn btn-outline-dark mx-2"></a>
                             </div>
                         </td>
-                        <td>{{ (item.produit.prixVente * item.quantite) | number_format(2, ',', ' ') }} €</td>
-                        <td>{{ (item.produit.prixVente * item.quantite * 1.20) | number_format(2, ',', ' ') }} €</td>
+                        <td>{{ (item.produit.prixVente * (1 + 0.20) * item.quantite) | number_format(2, ',', ' ') }} €</td> <!-- Total TTC pour ce produit -->
                         <td>
                             <div class="d-flex justify-content-center">
                                 <a href="{{ path('panier.supprimer', {'id': item.produit.id}) }}" class="bi bi-x-circle btn btn-outline-dark mx-2" title="Suppression rapide"></a>
@@ -50,13 +50,16 @@
             <tfoot>
                 <tr>
                     <td colspan="5"></td>
-                    <td>{{ (total * 1.20) | number_format(2, ',', ' ') }}</td>
+                    <td>{{ (total) | number_format(2, ',', ' ') }} €</td>
                     <td>
                         <a href="{{ path('panier.vider')}}" class="btn btn-outline-danger bi bi-trash"></a>
                     </td>
                 </tr>
             </tfoot>
         </table>
+        <div class="d-flex justify-content-end">
+            <a href="{{ path('commande.ajout') }}" class="btn btn-outline-success " type="submit ">Valider le panier</a>
+        </div>
     </div>
 </section>
 {% endblock %}

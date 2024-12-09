@@ -13,7 +13,8 @@ class PanierProduit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[ORM\ManyToOne(targetEntity: Panier::class, inversedBy: 'produits', cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Panier $panier = null;
 
     #[ORM\Column]
@@ -23,12 +24,10 @@ class PanierProduit
     private ?float $prix = null;
 
     #[ORM\Column]
-    private ?float $prixTotal = null;
-
-    #[ORM\Column]
     private ?\DateTimeImmutable $addedAt = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Produit::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Produit $produit = null;
 
     public function getId(): ?int
@@ -68,18 +67,6 @@ class PanierProduit
     public function setPrix(float $prix): static
     {
         $this->prix = $prix;
-
-        return $this;
-    }
-
-    public function getPrixTotal(): ?float
-    {
-        return $this->prixTotal;
-    }
-
-    public function setPrixTotal(float $prixTotal): static
-    {
-        $this->prixTotal = $prixTotal;
 
         return $this;
     }

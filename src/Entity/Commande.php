@@ -17,7 +17,8 @@ class Commande
     #[ORM\OneToOne(inversedBy: 'commande', cascade: ['persist', 'remove'])]
     private ?Utilisateur $utilisateur = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: Panier::class, cascade: ['persist'])]
+    #[ORM\JoinColumn]
     private ?Panier $panier = null;
 
     #[ORM\Column]
@@ -29,7 +30,7 @@ class Commande
     #[ORM\Column(enumType: StatutCommande::class)]
     private ?StatutCommande $status = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'datetime_immutable', nullable: false)]
     private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
@@ -102,10 +103,12 @@ class Commande
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
+
+    
 }
