@@ -18,21 +18,21 @@
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {% block importmap %}
+                <script src="{{ asset('toast.js') }}"></script>
+            {% endblock %}
         {% endblock %}
+
     </head>
     <body class="d-flex flex-column min-vh-100 col-9 mx-auto bg-black border border-1 border-dark">
         {% include "partials/navbar.html.twig" %}
+
         
         <main class="d-flex flex-column flex-fill bg-white shadow-lg align-items-center justify-content-center p-0 m-0">
             <div class="container">
-                {# {% for messages in app.flashes %}
-                    {% for message in messages %}
-                        <div class="alert alert-success" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endfor %} #}
+                <div class="d-flex justify-content-center align-items-center">
+                    {% include "partials/toasts.html.twig" %}
+                </div>
                 
                 {% block body %}
                 {% endblock %}
@@ -40,7 +40,6 @@
         </main>
 
         {% include "partials/footer.html.twig" %}
-        <!-- JavaScript de Bootstrap et ses dépendances (Popper.js) -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>

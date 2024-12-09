@@ -1,0 +1,35 @@
+{% for label, messages in app.flashes %}
+{# 
+    <div class="toast align-items-center text-white position-fixed top-0 start-50 translate-middle-x mb-3 custom-toast-margin" 
+    
+         role="alert" 
+         aria-live="assertive" 
+         aria-atomic="true"
+         {% if label == 'success' %}class="bg-success"{% elseif label == 'danger' %}class="bg-danger"{% elseif label == 'warning' %}class="bg-warning"{% else %}class="bg-info"{% endif %}>
+        <div class="d-flex">
+            <div class="toast-body">
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+    </div> #}
+
+    <!-- Toast (Notification) -->
+    <div id="toastContainer" class="mt-3">
+        <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body text-center">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+
