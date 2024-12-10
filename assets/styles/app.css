@@ -64,19 +64,32 @@ em {
     background-color: #e6e6e6;
 }
 
-.nav-link , .nav-item {
+/* .nav-link , .nav-item {
     color: #C9A96E;
-    font-size: large;
     margin: auto;
     transition: transform 0.3s ease, font-weight 0.3s ease;
+} */
+
+/* Agrandir tous les liens */
+.navbar-nav .nav-link {
+    font-size: 1.3rem;  /* Taille générale des liens */
+    font-weight: normal;
+    transition: font-size 0.3s ease, color 0.3s ease;
 }
 
-.navbar-nav .nav-link:hover , .nav-item:hover {
-    color: #C9A96E; /* Couleur sur hover */
-    font-weight: bold; /* Mettre en gras */
-    transform: scale(1.15); /* Zoom de 15% */
+/* Agrandir les liens actifs */
+.navbar-nav .nav-link.active {
+    font-size: 1.5rem;  /* Taille des liens actifs */
+    font-weight: bold;  /* Mise en gras des liens actifs */
+    color: #C9A96E;  /* Couleur spécifique pour les liens actifs */
 }
 
+/* Optionnel : Agrandir les liens au survol (hover) */
+.navbar-nav .nav-link:hover {
+    font-size: 1.5rem;  /* Taille de survol */
+    font-weight: bold;
+    color: #C9A96E;
+}
 
 
 .bg-gold 
@@ -104,14 +117,7 @@ em {
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-.navbar-nav .nav-link.active
-{
-    color: #C9A96E;
-    font-size: 1.5rem;
-    margin: auto;
-    font-weight: bold;
-    font-style: italic;
-}
+
 
 /* Appliquer uniquement aux images dans la section .product-list */
 .product-list .card-img-top {

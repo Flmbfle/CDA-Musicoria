@@ -18,24 +18,24 @@
             <div class="col-sm-12 col-md-6 col-lg-5 collapse navbar-collapse m-auto" id="navbarNav">
                 <ul class="navbar-nav d-flex justify-content-around w-100">
                     <li class="nav-item">
-                        <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'produit' %}active{% endif %}" href="{{ path('produit') }}" >Produits</a>
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'produit' %}active{% endif %}" href="{{ path('produit') }}" >Produits</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fs-4  {% if app.request.get('_route') starts with 'categorie' %}active{% endif %}" href="{{ path('categorie') }}" >Categories</a>
+                        <a class="nav-link  {% if app.request.attributes.get('_route') == 'categorie' %}active{% endif %}" href="{{ path('categorie') }}" >Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'panier' %}active{% endif %}" href="{{ path('panier') }}">Panier</a>
                     </li>
                     <li class="nav-item ">
-                        <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'panier' %}active{% endif %}" href="{{ path('panier') }}">Panier</a>
-                    </li>
-                    <li class="nav-item ">
-                        {# <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a> #}
+                        {# <a class="nav-link {% if app.request.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a> #}
                     </li>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <li class="nav-item ">
-                            <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'profil-' %}active{% endif %}" href="{{ path('profil') }}">Profil</a>
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'profil-' %}active{% endif %}" href="{{ path('profil') }}">Profil</a>
                         </li>
                         {% else %}
                         <li class="nav-item ">
-                            <a class="nav-link fs-4 {% if app.request.get('_route') starts with 'security.login' %}active{% endif %}" href="{{ path('security.login') }}">Connexion</a>
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'security.login' %}active{% endif %}" href="{{ path('security.login') }}">Connexion</a>
                         </li>
                     {% endif %}
                     

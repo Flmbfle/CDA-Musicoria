@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<section>
+    <h1>Paiement réussi !</h1>
+    <p>Merci pour votre commande. Vous recevrez une confirmation par e-mail sous peu.</p>
+    <a href="{{ path('produit') }}" class="btn btn-primary">Retour à la boutique</a>
+</section>
+{% endblock %}

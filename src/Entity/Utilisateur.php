@@ -76,14 +76,16 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
-    private ?Panier $panier = null;
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Panier::class)]
+    private Collection $panier;
 
-    #[ORM\OneToOne(mappedBy: 'utilisateur', cascade: ['persist', 'remove'])]
-    private ?Commande $commande = null;
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commande::class)]
+    private Collection $commande;
 
     public function __construct()
     {
+        $this->panier = new ArrayCollection();
+        $this->commande = new ArrayCollection();
         $this->date_inscription = new \DateTimeImmutable();
     }
 
@@ -216,6 +218,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
     public function getCoefficient(): ?string
     {
         return $this->coefficient;
@@ -284,48 +287,42 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPanier(): ?Panier
+    // Méthode pour récupérer le panier actif
+    public function getPanierActif(): ?Panier
     {
-        return $this->panier;
-    }
-
-    public function setPanier(?Panier $panier): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($panier === null && $this->panier !== null) {
-            $this->panier->setUtilisateur(null);
+        foreach ($this->panier as $panier) {
+            if ($panier->getStatus() === false) {  // Assurez-vous que vous avez un champ `status` dans Panier
+                return $panier;
+            }
         }
-
-        // set the owning side of the relation if necessary
-        if ($panier !== null && $panier->getUtilisateur() !== $this) {
+        return null;  // Retourne null si aucun panier actif
+    }
+    
+    public function addPanier(Panier $panier): self
+    {
+        if (!$this->panier->contains($panier)) {
+            $this->panier[] = $panier;
             $panier->setUtilisateur($this);
         }
-
-        $this->panier = $panier;
-
+    
+        return $this;
+    }
+    
+    public function removePanier(Panier $panier): self
+    {
+        if ($this->panier->removeElement($panier)) {
+            // Set the owning side to null (unless already changed)
+            if ($panier->getUtilisateur() === $this) {
+                $panier->setUtilisateur(null);
+            }
+        }
+    
         return $this;
     }
 
-    public function getCommande(): ?Commande
+    public function getCommandes(): Collection
     {
         return $this->commande;
-    }
-
-    public function setCommande(?Commande $commande): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($commande === null && $this->commande !== null) {
-            $this->commande->setUtilisateur(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($commande !== null && $commande->getUtilisateur() !== $this) {
-            $commande->setUtilisateur($this);
-        }
-
-        $this->commande = $commande;
-
-        return $this;
     }
 
 }
