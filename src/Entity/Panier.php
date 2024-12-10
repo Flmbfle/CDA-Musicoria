@@ -21,7 +21,9 @@ class Panier
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToOne(inversedBy: 'panier', cascade: ['persist', 'remove'])]
+    
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class, inversedBy: 'paniers')]
+    #[ORM\JoinColumn(nullable: false)] // Ceci peut être à true si vous voulez que le panier ne soit pas obligatoire
     private ?Utilisateur $utilisateur = null;
 
     /**
@@ -29,6 +31,9 @@ class Panier
      */
     #[ORM\OneToMany(targetEntity: PanierProduit::class, mappedBy: 'panier', cascade: ['persist', 'remove'])]
     private Collection $produits;
+
+    #[ORM\Column]
+    private ?bool $status = false;
 
     public function __construct()
     {
@@ -102,6 +107,18 @@ class Panier
                 $produit->setPanier(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }

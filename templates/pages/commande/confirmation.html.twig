@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la commande{% endblock %}
+
+{% block body %}
+<h1>Détails de la commande</h1>
+
+<p><strong>Commande ID:</strong> {{ commande.id }}</p>
+<p><strong>Date de création:</strong> {{ commande.createdAt|date('d/m/Y H:i') }}</p>
+
+<h2>Produits commandés:</h2>
+<div class="table-responsive">
+    <table class="table table-striped text-center align-middle table-light border border-dark my-3">
+        <thead>
+            <tr>
+                <th>Libelle</th>
+                <th>Quantité</th>
+                <th>Prix</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for panierProduit in panierProduits %}
+            <tr>
+                <td>{{ panierProduit.produit.libelle }}</td>
+                <td>{{ panierProduit.quantite }}</td>
+                <td>{{ (panierProduit.prix * 1.20) | number_format(2, ',', ' ') }}</td>
+                <td>{{ (panierProduit.prix * (1 + 0.20) * panierProduit.quantite) | number_format(2, ',', ' ') }} €</td> <!-- Total TTC pour ce produit -->
+            </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"></td>
+                <td>{{ commande.prixTTC | number_format(2, ',', ' ') }} €</td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="d-flex justify-content-end">
+        <a href="{{ path('commande.paiement', {'id': commande.id}) }}" class="btn btn-outline-success" type="submit">Payer</a>
+    </div>
+
+{% endblock %}

@@ -4,6 +4,13 @@
 
 {% block body %}
 <section>
+    {% if data is empty %}
+        <div class="alert alert-warning text-center">
+            <h2>Votre panier est vide !</h2>
+            <br>
+            <p>Il est temps de découvrir nos produits ! <a href="{{ path('produit') }}">Cliquez ici pour faire vos achats</a>.</p>
+        </div>
+    {% else %}
     <h1>Votre Panier</h1>
     <div class="table-responsive">
         <table class="table table-striped text-center align-middle table-light border border-dark my-3">
@@ -61,5 +68,6 @@
             <a href="{{ path('commande.ajout') }}" class="btn btn-outline-success " type="submit ">Valider le panier</a>
         </div>
     </div>
+    {% endif %}
 </section>
 {% endblock %}

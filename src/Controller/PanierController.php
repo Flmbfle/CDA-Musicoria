@@ -18,26 +18,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
 {
-    public function __construct(private RequestStack $requestStack,private EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $requestStack;
         $em;
     }
 
 
     #[Route('/panier', 'panier')]
-    public function index(RequestStack $requestStack, ProduitRepository $produitRepository)
+    public function index()
     {
         $user = $this->getUser();
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
 
-        $panier = $user->getPanier();
-
-        if (!$panier) {
-            return $this->render('pages/main/index.html.twig');
-        }
+        $panier = $user->getPanierActif();
     
         // Récupérer les produits dans le panier
         $panierProduits = $panier->getProduits();
@@ -75,7 +70,7 @@ class PanierController extends AbstractController
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
-        $panier = $user->getPanier(); // On récupère le panier de l'utilisateur
+        $panier = $user->getPanierActif();
     
         // Si l'utilisateur n'a pas encore de panier, en créer un
         if (!$panier) {
@@ -124,7 +119,7 @@ class PanierController extends AbstractController
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
-        $panier = $user->getPanier();  // Récupérer le panier de l'utilisateur
+        $panier = $user->getPanierActif();  // Récupérer le panier de l'utilisateur
     
         $panierProduit = $this->em->getRepository(PanierProduit::class)->findOneBy([
             'produit' => $produit,
@@ -152,7 +147,7 @@ class PanierController extends AbstractController
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
-        $panier = $user->getPanier();  // Récupérer le panier de l'utilisateur
+        $panier = $user->getPanierActif();  // Récupérer le panier de l'utilisateur
     
         $panierProduit = $this->em->getRepository(PanierProduit::class)->findOneBy([
             'produit' => $produit,
@@ -176,7 +171,7 @@ class PanierController extends AbstractController
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
 
-        $panier = $user->getPanier();  // Récupérer le panier de l'utilisateur
+        $panier = $user->getPanierActif();  // Récupérer le panier de l'utilisateur
     
         $panierProduits = $this->em->getRepository(PanierProduit::class)->findBy([
             'panier' => $panier,  // Utiliser 'panier' ici aussi
