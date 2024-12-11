@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use DateTimeZone;
 use App\Entity\Panier;
+use DateTimeImmutable;
 use App\Entity\Produit;
 use App\Entity\Commande;
 use Ramsey\Uuid\Guid\Guid;
@@ -12,6 +14,8 @@ use App\Entity\PanierProduit;
 use App\Repository\ProduitRepository;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,11 +40,11 @@ class CommandeController extends AbstractController
             $this->addFlash('error', 'Votre panier est vide.');
             return $this->redirectToRoute('panier');
         }
-        
+        $timezone = new DateTimeZone('Europe/Paris'); 
         // Créer une nouvelle commande
         $commande = new Commande();
         $commande->setUtilisateur($user)
-            ->setCreatedAt(new \DateTimeImmutable())
+            ->setCreatedAt(new DateTimeImmutable('now', $timezone))
             ->setStatus(StatutCommande::EN_ATTENTE);
             do {
                 $reference = uniqid(); // ou utilisez UUID ici
@@ -132,23 +136,48 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/commande/historique', name: 'commande.historique')]
-    public function historique(CommandeRepository $commandeRepository)
+    public function historique(Request $request, CommandeRepository $commandeRepository, PaginatorInterface $paginator)
     {
         // Récupérer l'utilisateur connecté
         $user = $this->getUser();
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
-
-        // Récupérer toutes les commandes de l'utilisateur
-        $commandes = $commandeRepository->findBy(
-            ['utilisateur' => $user], // Filtrer par utilisateur
-            ['createdAt' => 'DESC']   // Trier par date décroissante
+    
+        // Récupérer la page actuelle depuis la requête (par défaut page 1)
+        $page = $request->query->getInt('page', 1);
+        
+        // Récupérer le critère de tri (date par défaut)
+        $sortBy = $request->query->get('sortBy', 'createdAt'); // 'createdAt' ou 'prixTTC'
+        $commande = $request->query->get('commande', 'DESC'); // 'ASC' ou 'DESC'
+        $statutCommande = $request->query->get('statutCommande', null);
+    
+        // Ajouter la logique pour trier par statut
+        if ($statutCommande) {
+            $query = $commandeRepository->findBy(
+                ['utilisateur' => $user], 
+                ['status' => $statutCommande]  // Trier selon le statut
+            );
+        } else {
+            $query = $commandeRepository->findBy(
+                ['utilisateur' => $user], 
+                [$sortBy => $commande]  // Sinon trier par date ou prix
+            );
+        }
+    
+        // Appliquer la pagination
+        $commandes = $paginator->paginate(
+            $query,             // La requête
+            $page,              // La page actuelle
+            10                  // Le nombre d'éléments par page
         );
-
+    
         // Renvoyer les commandes à la vue
         return $this->render('pages/commande/historique.html.twig', [
             'commandes' => $commandes,
+            'sortBy' => $sortBy,
+            'commande' => $commande,
+            'statutCommande' => $statutCommande
         ]);
     }
 

@@ -6,6 +6,102 @@ body
     font-weight: 500;
 }
 
+.btn-outline-dark {
+    background-color: #F5F5F5; /* Exemple de couleur personnalisée */
+    border-color: #333333;     /* Changer la couleur de la bordure */
+}
+
+.btn-outline-dark:hover {
+    background-color: #333333;  /* Fond noir au survol */
+    color: #F5F5F5;             /* Texte blanc au survol */
+}
+
+/* Modifier le fond des boutons btn-dark (s'il est utilisé) */
+.btn-dark {
+    background-color: #333333;  /* Fond noir */
+    border-color: #333333;      /* Bordure noire */
+    color: #F5F5F5;             /* Texte blanc */
+}
+
+.btn-dark:hover {
+    background-color: #444444;  /* Fond gris foncé au survol */
+    color: #F5F5F5;             /* Texte blanc au survol */
+}
+
+/* Personnalisation des tableaux */
+.table {
+    border-color: #333333;    /* Bordure des tableaux */
+    background-color: #F5F5F5; /* Fond des tableaux (légèrement gris) */
+}
+
+.table th, .table td {
+    border-color: #333333;    /* Bordure des cellules du tableau */
+}
+
+/* Ajouter des couleurs pour les lignes du tableau */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e9ecef;  /* Lignes impaires en fond gris clair */
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: #F5F5F5;  /* Lignes paires en fond très clair */
+}
+
+/* Modifier les en-têtes de tableau */
+.table th {
+    background-color: #333333;  /* Fond des en-têtes du tableau */
+    color: #F5F5F5;             /* Texte blanc pour les en-têtes */
+}
+
+th a {
+    text-decoration: none;
+    color: #C9A96E;
+    display: inline-block;
+    transition: color 0.3s ease, transform 0.3s ease; /* Transition pour couleur et effet de zoom */
+}
+
+th a:hover {
+    color: #C9A96E; /* Une couleur bleue pour surbriller le lien */
+    text-decoration: underline; /* Ajoute un soulignement au survol */
+    transform: scale(1.05); /* Légère augmentation de la taille (zoom) */
+}
+
+/* PAGINATOR */
+.pagination {
+    justify-content: center;
+}
+
+/* Couleur de fond des liens */
+.page-link {
+    color: #333333;
+    background-color: #f5f5f5; 
+    border: 1px solid #333333; 
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+/* Survol des liens */
+.page-link:hover {
+    color: #C9A96E;
+    background-color: #333333;
+    border-color: #333333;
+}
+
+/* Active (la page courante) */
+.page-item.active .page-link {
+    background-color: #333333;
+    color: #C9A96E;
+    border-color: #333333;
+}
+
+/* Désactivé (Précédent ou Suivant quand il est inactif) */
+.page-item.disabled .page-link {
+    background-color: #F5F5F5;
+    color: #6c757d;
+    border-color: #333333;
+    text-decoration-line: line-through;
+}
+
+
 nav , footer
 {
     min-height: 90px; /* Ajustez cette valeur selon vos besoins */

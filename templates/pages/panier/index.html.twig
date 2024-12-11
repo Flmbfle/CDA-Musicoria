@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Musicoria - Produits{% endblock %}
+{% block title %}Musicoria - Panier{% endblock %}
 
 {% block body %}
 <section>
@@ -11,9 +11,9 @@
             <p>Il est temps de découvrir nos produits ! <a href="{{ path('produit') }}">Cliquez ici pour faire vos achats</a>.</p>
         </div>
     {% else %}
-    <h1>Votre Panier</h1>
+    <h1 class="mb-4">Votre Panier</h1>
     <div class="table-responsive">
-        <table class="table table-striped text-center align-middle table-light border border-dark my-3">
+        <table class="table table-hover text-center align-middle table-light border border-dark rounded shadow-sm my-3">
             <thead>
                 <tr>
                     <th class="col p-3">Image</th>
@@ -48,24 +48,30 @@
                             </div>
                         </td>
                     </tr>
-                    {% else %}
+                {% else %}
                     <tr>
-                        <td colspan="7">Votre panier est vide</td>
+                        <td colspan="7" class="text-center">Votre panier est vide</td>
                     </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="5"></td>
+                    <td colspan="5" class="text-end"><strong>Total</strong></td>
                     <td>{{ (total) | number_format(2, ',', ' ') }} €</td>
                     <td>
-                        <a href="{{ path('panier.vider')}}" class="btn btn-outline-danger bi bi-trash"></a>
+                        <a href="{{ path('panier.vider')}}" class="btn btn-outline-danger bi bi-trash" title="Vider le panier"></a>
                     </td>
                 </tr>
             </tfoot>
         </table>
-        <div class="d-flex justify-content-end">
-            <a href="{{ path('commande.ajout') }}" class="btn btn-outline-success " type="submit ">Valider le panier</a>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ path('produit') }}" class="btn btn-outline-dark">
+                <i class="bi bi-arrow-left"></i> Retour aux produits
+            </a>
+            <a href="{{ path('commande.ajout') }}" class="btn btn-outline-success">
+                Valider le panier <i class="bi bi-check-lg"></i>
+            </a>
         </div>
     </div>
     {% endif %}

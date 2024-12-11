@@ -4,20 +4,49 @@
 
 {% block body %}
 <section>
-    <h1>Historique des commandes</h1>
+    <h1 class="mt-4">Historique des commandes</h1>
 
-    {% if commandes is empty %}
+    {% if commandes|length == 0 %}
         <p>Vous n'avez pas encore passé de commande.</p>
     {% else %}
+        <!-- Table -->
         <div class="table-responsive">
-            <table class="table table-striped text-center align-middle table-light border border-dark my-3">
+            <table class="table table-hover text-center align-middle table-light border border-dark rounded shadow-sm my-3">
                 <thead>
                     <tr>
-                        <th>Référence</th>
-                        <th>Date</th>
-                        <th>Prix</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
+                        <th>
+                            <a href="{{ path('commande.historique', {'sortBy': 'reference', 'commande': commande == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Référence
+                                {% if sortBy == 'reference' %}
+                                    <span class="bi {{ commande == 'ASC' ? 'bi-arrow-down' : 'bi-arrow-up' }}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ path('commande.historique', {'sortBy': 'createdAt', 'commande': commande == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Date
+                                {% if sortBy == 'createdAt' %}
+                                    <span class="bi {{ commande == 'ASC' ? 'bi-arrow-down' : 'bi-arrow-up' }}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ path('commande.historique', {'sortBy': 'prixTTC', 'commande': commande == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Prix
+                                {% if sortBy == 'prixTTC' %}
+                                    <span class="bi {{ commande == 'ASC' ? 'bi-arrow-down' : 'bi-arrow-up' }}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>
+                            <a href="{{ path('commande.historique', {'statutCommande': statutCommande == 'ASC' ? 'DESC' : 'ASC'}) }}">
+                                Statut
+                                {% if statutCommande %}
+                                    <span class="bi {{ statutCommande == 'ASC' ? 'bi-arrow-down' : 'bi-arrow-up' }}"></span>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +63,15 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination -->
+        <div id="commandePagination">
+            <div class="d-flex justify-content-center align-items-center ">
+                <div class="pagination">
+                    {{ knp_pagination_render(commandes) }}
+                </div>
+            </div>
         </div>
     {% endif %}
 </section>

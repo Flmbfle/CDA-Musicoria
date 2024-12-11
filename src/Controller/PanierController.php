@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use DateTimeZone;
 use App\Entity\Panier;
 use DateTimeImmutable;
 use App\Entity\Produit;
@@ -14,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PanierController extends AbstractController
@@ -25,6 +27,7 @@ class PanierController extends AbstractController
 
 
     #[Route('/panier', 'panier')]
+    #[IsGranted('ROLE_CLIENT')]
     public function index()
     {
         $user = $this->getUser();
@@ -33,6 +36,14 @@ class PanierController extends AbstractController
         }
 
         $panier = $user->getPanierActif();
+
+        // Si l'utilisateur n'a pas de panier, retourner une vue avec un message approprié
+        if (!$panier) {
+            return $this->render('pages/panier/index.html.twig', [
+                'data' => [],
+                'total' => 0,
+            ]);
+        }
     
         // Récupérer les produits dans le panier
         $panierProduits = $panier->getProduits();
@@ -71,13 +82,13 @@ class PanierController extends AbstractController
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
         $panier = $user->getPanierActif();
-    
+        $timezone = new DateTimeZone('Europe/Paris'); 
         // Si l'utilisateur n'a pas encore de panier, en créer un
         if (!$panier) {
             $panier = new Panier();
             $panier->setUtilisateur($user)
-                ->setCreatedAt(new DateTimeImmutable())
-                ->setUpdatedAt(new DateTimeImmutable());
+                ->setCreatedAt(new DateTimeImmutable('now', $timezone))
+                ->setUpdatedAt(new DateTimeImmutable('now', $timezone));
     
             $this->em->persist($panier);
             $this->em->flush();
@@ -99,12 +110,12 @@ class PanierController extends AbstractController
                 ->setPanier($panier)
                 ->setQuantite(1)
                 ->setPrix($produit->getPrixVente())
-                ->setAddedAt(new DateTimeImmutable());
+                ->setAddedAt(new DateTimeImmutable('now', $timezone));
 
     
             $this->em->persist($panierProduit);
         }
-        $panier->setUpdatedAt(new DateTimeImmutable());
+        $panier->setUpdatedAt(new DateTimeImmutable('now', $timezone));
     
         $this->em->flush();
     
