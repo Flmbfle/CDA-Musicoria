@@ -13,6 +13,18 @@ Pour crée la base et les fixtures utiliser :
 Lancer le serveur web:
     php -S 0.0.0.0:8000 -t public
 
+Pour Lancer et faire fonctionner normalement le paiement et les webhook , utiliser ngrok:
+    curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+	    | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+	    && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" \
+	    | sudo tee /etc/apt/sources.list.d/ngrok.list \
+	    && sudo apt update \
+	    && sudo apt install ngrok
+
+    ngrok config add-authtoken 2Omv5K7OFMhuoumdTjqnLf3a18O_39DQh451Nt35T5oGRWy6r
+
+    ngrok http --url=jaguar-outgoing-goshawk.ngrok-free.app 8000
+
 Pour crée une migration :
     php bin/console make:migration
 

@@ -3,11 +3,15 @@
 namespace App\Controller;
 
 use Stripe\Stripe;
+use Stripe\Invoice;
+use Stripe\Webhook;
 use App\Entity\Commande;
 use App\Entity\Utilisateur;
+use App\Enum\StatutCommande;
 use Stripe\Checkout\Session;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -107,6 +111,9 @@ class PaymentController extends AbstractController
                     ],
                 ],
             ],
+            'metadata' => [
+                'commande_id' => $commande->getID(), // Ajoute l'ID de la commande
+            ],
             'success_url' => $YOUR_DOMAIN . '/paiement/success',
             'cancel_url' => $YOUR_DOMAIN . '/paiement/cancel',
         ]);
@@ -114,7 +121,7 @@ class PaymentController extends AbstractController
         header("HTTP/1.1 303 See Other");
         header("Location: " . $checkout_session->url);
 
-        return $this->render('pages/paiement/index.html.twig');
+        return $this->redirect($checkout_session->url, 303);
     }
 
     #[Route('paiement/success', 'paiement.success')]
@@ -129,5 +136,74 @@ class PaymentController extends AbstractController
         $this->addFlash('cancel', 'Votre achat à été annulé');
 
         return $this->redirectToRoute('accueil');
+    }
+
+    public function retrieveInvoice($sessionId)
+    {
+        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+    
+        // Récupérer la session de paiement Stripe
+        $session = Session::retrieve($sessionId);
+    
+        // Vérifier si une facture a été générée
+        if ($session->invoice) {
+            // Récupérer la facture
+            $invoice = Invoice::retrieve($session->invoice);
+        
+            // Vous pouvez maintenant récupérer l'URL de la facture en PDF
+            $invoicePdfUrl = $invoice->hosted_invoice_url; // URL de la facture PDF
+        
+            // Exemple: rediriger l'utilisateur vers la facture PDF
+            return $this->redirect($invoicePdfUrl);
+        }
+    
+        throw new \Exception('Aucune facture générée pour cette session.');
+    }
+
+    // Gestionnaire du webhook Stripe : vérifie l'authenticité des notifications Stripe, traite les événements 
+    // de type "checkout.session.completed", et met à jour le statut des commandes dans la base de données.
+
+    #[Route('/webhook', name: 'stripe_webhook')]
+    public function handleStripeWebhook(Request $request, CommandeRepository $commandeRepository): Response
+    {
+        Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+        // Récupérer la clé secrète du webhook
+        $endpointSecret = $_ENV['STRIPE_WEBHOOK_SECRET'];
+    
+        $payload = $request->getContent();
+        $sigHeader = $request->headers->get('stripe-signature');
+        $event = null;
+    
+        try {
+            // Vérification de la signature du webhook
+            $event = Webhook::constructEvent(
+                $payload,
+                $sigHeader,
+                $endpointSecret
+            );
+        } catch (\UnexpectedValueException $e) {
+            // Payload invalide
+            return new Response('Invalid payload', 400);
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            // Signature invalide
+            return new Response('Invalid signature', 400);
+        }
+    
+        // Traiter les événements
+        if ($event->type === 'checkout.session.completed') {
+            $session = $event->data->object;
+        
+            // Récupération des métadonnées
+            $commandeId = $session->metadata->commande_id;
+            $commande = $commandeRepository->find($commandeId);
+
+            if ($commande) {
+                $commande->setStatus(StatutCommande::VALIDEE);
+                $this->em->persist($commande);
+                $this->em->flush();
+            }
+        }
+    
+    return new Response('Webhook handled', 200);
     }
 }

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des commandes{% endblock %}
+
+{% block body %}
+<section>
+    <h1>Historique des commandes</h1>
+
+    {% if commandes is empty %}
+        <p>Vous n'avez pas encore passé de commande.</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped text-center align-middle table-light border border-dark my-3">
+                <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Date</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                        <tr>
+                            <td>{{ commande.reference }}</td>
+                            <td>{{ commande.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>{{ commande.prixTTC|number_format(2, ',', ' ') }} €</td>
+                            <td>{{ commande.status.label }}</td>
+                            <td>
+                                <a href="{{ path('commande.details', {'id': commande.id}) }}" class="btn btn-sm btn-outline-dark  bi bi-search"></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

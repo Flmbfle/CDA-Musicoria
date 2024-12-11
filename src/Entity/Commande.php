@@ -37,6 +37,9 @@ class Commande
     #[ORM\Column(length: 20, unique: true)]
     private ?string $reference = null;
 
+    #[ORM\Column(length: 500, nullable: true)]
+    private ?string $invoicePdfUrl = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,6 +125,18 @@ class Commande
     public function setReference(string $reference): static
     {
         $this->reference = $reference;
+
+        return $this;
+    }
+
+    public function getInvoicePdfUrl(): ?string
+    {
+        return $this->invoicePdfUrl;
+    }
+
+    public function setInvoicePdfUrl(?string $invoicePdfUrl): static
+    {
+        $this->invoicePdfUrl = $invoicePdfUrl;
 
         return $this;
     }

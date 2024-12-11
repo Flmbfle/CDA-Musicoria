@@ -96,10 +96,10 @@ class CommandeController extends AbstractController
         $em->flush();
         // Rediriger vers la confirmation de commande ou une autre page
         $this->addFlash('success', 'Votre commande a bien été enregistrée !');
-        return $this->redirectToRoute('commande_details', ['id' => $commande->getId()]);
+        return $this->redirectToRoute('commande.details', ['id' => $commande->getId()]);
     }
 
-    #[Route('/commande/{id}', name: 'commande_details', requirements: ['id' => '\d+'])]
+    #[Route('/commande/{id}', name: 'commande.details', requirements: ['id' => '\d+'])]
     #[ParamConverter('commande', Commande::class)]    
     public function afficherCommande(CommandeRepository $commandeRepository, int $id)
     {
@@ -117,13 +117,39 @@ class CommandeController extends AbstractController
         }
 
         $panier = $commande->getPanier();
+        $statut = $commande->getStatus();
+
+        // dd($statut);
         $panierProduits = $panier->getProduits();
         
 
         // Renvoyer la commande à une vue ou effectuer d'autres actions
-        return $this->render('pages/commande/confirmation.html.twig', [
+        return $this->render('pages/commande/details.html.twig', [
             'commande' => $commande, 
+            'statut' => $statut,
             'panierProduits' => $panierProduits,
         ]);
     }
+
+    #[Route('/commande/historique', name: 'commande.historique')]
+    public function historique(CommandeRepository $commandeRepository)
+    {
+        // Récupérer l'utilisateur connecté
+        $user = $this->getUser();
+        if (!$user instanceof Utilisateur) {
+            throw $this->createAccessDeniedException('Utilisateur non valide.');
+        }
+
+        // Récupérer toutes les commandes de l'utilisateur
+        $commandes = $commandeRepository->findBy(
+            ['utilisateur' => $user], // Filtrer par utilisateur
+            ['createdAt' => 'DESC']   // Trier par date décroissante
+        );
+
+        // Renvoyer les commandes à la vue
+        return $this->render('pages/commande/historique.html.twig', [
+            'commandes' => $commandes,
+        ]);
+    }
+
 }

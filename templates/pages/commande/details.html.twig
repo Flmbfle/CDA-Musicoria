@@ -37,8 +37,10 @@
             </tr>
         </tfoot>
     </table>
+    {% if statut.value == 'En attente' %}
     <div class="d-flex justify-content-end">
         <a href="{{ path('commande.paiement', {'id': commande.id}) }}" class="btn btn-outline-success" type="submit">Payer</a>
     </div>
+    {% endif %}
 
 {% endblock %}
