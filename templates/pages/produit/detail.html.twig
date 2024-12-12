@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ produit.libelle }}{% endblock %}
+
+{% block body %}
+    <section class="product-detail">
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-12 p-5">
+                    <div class="card shadow-lg rounded-3 position-relative">
+                        <div class="row g-0">
+                            <!-- Image du produit -->
+                            <div class="col-md-5 img-fluid">
+                                <img src="{{ produit.image }}" alt="{{ produit.libelle }}" class="img-fluid rounded-start" style="object-fit: cover; height: 100%; width: 100%;">
+                            </div>
+                            <!-- Détails du produit -->
+                            <div class="col-md-7 d-flex flex-column justify-content-between p-4 card-body">
+                                <div class="m-4">
+                                    <h1 class="card-title mb-3">{{ produit.libelle }}</h1>
+                                    <em class="card-text fs-4"><strong>{{ produit.prixVente }} €</strong></em><br>
+                                    <span class="card-text"><small>Disponibilité: {{ produit.stock }}</small></span>
+                                    <p class="card-text my-4">{{ produit.description }}</p>
+                                    <small class="card-text">Fournisseur: {{ produit.fournisseur.nom }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bouton ajouté au panier en bas à droite -->
+                        <a href="{{ path('panier.ajouter', {'id': produit.id}) }}" class="bi bi-cart-plus btn btn-outline-dark position-absolute bottom-0 end-0 m-4">
+                            Ajouter au panier
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

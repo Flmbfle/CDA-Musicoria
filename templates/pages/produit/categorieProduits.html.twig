@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits de {{ categorie.libelle }}{% endblock %}
+
+{% block body %}
+    <h1>Produits de la sous-catégorie : {{ categorie.libelle }}</h1>
+
+<section id="productList" class="product-list col-12">
+        <div class="container col-12 mx-auto my-4">
+            {% for row in produits|slice(0, 12)|batch(3) %}
+                <div class="row d-flex justify-content-center">
+                    {% for produit in row %}
+                        <div class="col-md-3 p-3">
+                            <div class="card shadow rounded-3 m-2">
+                                <a href="{{ path('produit.detail', { 'slug': produit.slug }) }}">
+                                    <img src="{{ produit.image }}" class="card-img-top" alt="{{ produit.slug }}">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ produit.libelle }}</h5>
+                                    <p class="card-text">{{ produit.prixVente }} €</p>
+                                    <a href="#" class="btn bi bi-heart"></a>
+                                    <a href="{{ path('panier.ajouter', {'id': produit.id}) }}" class="btn bi bi-cart-plus"></a>
+                                </div>
+                                {# A SUPPRIMER #}
+                                <div class="card-footer">
+                                    <a href="{{ path('produit.modifier', { id: produit.id })}}" class="btn btn-info">Modifier</a>
+                                    <a href="{{ path('produit.supprimer', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

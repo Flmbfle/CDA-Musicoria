@@ -5,15 +5,21 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
+use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProduitController extends AbstractController
 {
+        public function __construct(private ProduitRepository $produitRepository, private EntityManagerInterface $em)
+    {
+        $this->produitRepository = $produitRepository;
+        $this->em = $em;
+    }
     /**
      * Cette fonction affiche tout les produits
      *
@@ -34,6 +40,24 @@ class ProduitController extends AbstractController
 
         return $this->render('pages/produit/produit.html.twig', [
             'produits' => $produits,
+        ]);
+    }
+
+    #[Route('/produit/{slug}', 'produit.detail')]
+    public function detail(string $slug): Response
+    {
+        // Récupérer le produit à partir du slug
+        $produit = $this->em
+            ->getRepository(Produit::class)
+            ->findOneBySlug($slug);
+
+        if (!$produit) {
+            throw $this->createNotFoundException('Produit non trouvé');
+        }
+        // dd($produit);
+        // Afficher la vue de détail du produit
+        return $this->render('pages/produit/detail.html.twig', [
+            'produit' => $produit,
         ]);
     }
 

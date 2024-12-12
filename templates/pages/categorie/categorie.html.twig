@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<section id="categorieFilter" class="bg-li my-4 py-3 inner-shadow col-12">
+{# <section id="categorieFilter" class="bg-li my-4 py-3 inner-shadow col-12">
     <div class="col-10 mx-auto">
         <div class="row d-flex justify-content-around align-items-center">
             <!-- Affichage du nombre total de résultats -->
@@ -19,17 +19,17 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                     {# <li><a class="dropdown-item" href="{{ path('app_categories', { 'sort': 'alphabetical_asc' }) }}">Alphabétique (A-Z)</a></li>
-                    <li><a class="dropdown-item" href="{{ path('app_categories', { 'sort': 'alphabetical_desc' }) }}">Alphabétique (Z-A)</a></li> #}
+                    <li><a class="dropdown-item" href="{{ path('app_categories', { 'sort': 'alphabetical_desc' }) }}">Alphabétique (Z-A)</a></li>
                 </ul>
             </div>
         </div>
     </div>
-</section>
+</section> #}
     {# !!! Mettre en ADMIN only !!! #}
-    <section>
+    {# <section>
         <a href="{{ path('categorie.nouveau')}}" class="btn btn-info">Nouvelle catégorie</a>
-    </section>
-<section id="categorieList" class="categorie-list col-12">
+    </section> #}
+<section id="categorieList" class="categorie-list col-12 pt-5">
     <div class="container col-10 mx-auto my-4">
         {% for row in categories|slice(0, 6)|batch(2) %}
             <div class="row d-flex justify-content-around">
@@ -37,8 +37,7 @@
                     <div class="col-md-6 px-3 py-4">
                         <div class="card shadow rounded-3">
                             <a href="{{ path('sousCategorie', {'slug': categorie.slug}) }}">
-                                {{ categorie.libelle }}
-                                <img src="{{ asset('/assets/images/categorie/' ~ categorie.image) }}" class="card-img-top rounded-3" alt="{{ categorie.slug }}" loading="lazy">
+                                <img src="{{ categorie.image }}" class="card-img-top rounded-3" alt="{{ categorie.slug }}" loading="lazy">
                             
                                 <div class="card-img-overlay d-flex justify-content-center align-items-center">
                                     <em class="card-title p-3 fs-3">{{ categorie.libelle }}</em>

@@ -4,16 +4,23 @@ namespace App\Controller;
 
 use App\Entity\Categorie;
 use App\Form\CategorieType;
+use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CategorieController extends AbstractController
 {
+    public function __construct(private ProduitRepository $produitRepository, private EntityManagerInterface $em)
+    {
+        $this->produitRepository = $produitRepository;
+        $this->em = $em;
+    }
+
     /**
      * Cette fonction affiche toute les categories parents
      *
@@ -111,6 +118,27 @@ class CategorieController extends AbstractController
         return $this->render('pages/categorie/sousCategorie.html.twig', [
             'parent' => $parent,
             'sousCategorie' => $sousCategorie,
+        ]);
+    }
+
+    #[Route('/categorie/{slug}/produits', name: 'sousCategorie.produits')]
+    public function showProduits(string $slug, Request $request)
+    {
+        // Récupérer la sous-catégorie en fonction du slug
+        $categorie = $this->em
+            ->getRepository(Categorie::class)
+            ->findOneBySlug($slug);
+
+        if (!$categorie) {
+            throw $this->createNotFoundException('Sous-catégorie non trouvée');
+        }
+
+        // Récupérer les produits associés à cette sous-catégorie
+        $produits = $this->produitRepository->findByCategorie($categorie);
+
+        return $this->render('pages/produit/categorieProduits.html.twig', [
+            'categorie' => $categorie,
+            'produits' => $produits,
         ]);
     }
 
