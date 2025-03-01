@@ -40,6 +40,10 @@ class Commande
     #[ORM\Column(length: 500, nullable: true)]
     private ?string $invoicePdfUrl = null;
 
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Adresse $adresse = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -137,6 +141,18 @@ class Commande
     public function setInvoicePdfUrl(?string $invoicePdfUrl): static
     {
         $this->invoicePdfUrl = $invoicePdfUrl;
+
+        return $this;
+    }
+
+    public function getAdresse(): ?Adresse
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(?Adresse $adresse): static
+    {
+        $this->adresse = $adresse;
 
         return $this;
     }

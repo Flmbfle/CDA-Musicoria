@@ -31,8 +31,7 @@ class PaymentController extends AbstractController
         $this->generator = $generator;
     }
 
-    #[Route('commande/{id}/paiement', 'commande.paiement', requirements: ['id' => '\d+'])]
-    #[ParamConverter('commande', Commande::class)]  
+    #[Route('commande/{id}/paiement', 'commande.paiement', requirements: ['id' => '\d+'])] 
     public function paiement(CommandeRepository $commandeRepository, EntityManagerInterface $em, int $id): Response
     {
         $commande = $commandeRepository->find($id);
@@ -65,9 +64,9 @@ class PaymentController extends AbstractController
             $prixUnitaire = $panierProduit->getPrix();
             $quantite = $panierProduit->getQuantite();
 
-            // Calculer le montant total pour chaque produit
-            $totalProduitTTC = $prixUnitaire * 1.20;  // Appliquer la TVA de 20%
-            $totalProduitTTC = $totalProduitTTC * $quantite;
+            // Appliquer la TVA une seule fois
+            $prixUnitaireTTC = $prixUnitaire * 1.20; // Appliquer la TVA de 20%
+            $totalProduitTTC = $prixUnitaireTTC * $quantite; // Appliquer la quantité
 
             $lineItems[] = [
                 'price_data' => [
@@ -76,7 +75,7 @@ class PaymentController extends AbstractController
                         'name' => $produit->getLibelle(),
                         'description' => $produit->getDescription(),
                     ],
-                    'unit_amount' => $totalProduitTTC * 100, // Le prix en centimes
+                    'unit_amount' => $prixUnitaireTTC * 100, // Le prix en centimes
                 ],
                 'quantity' => $quantite, // La quantité
             ];
@@ -114,7 +113,7 @@ class PaymentController extends AbstractController
             'metadata' => [
                 'commande_id' => $commande->getID(), // Ajoute l'ID de la commande
             ],
-            'success_url' => $YOUR_DOMAIN . '/paiement/success',
+            'success_url' => $YOUR_DOMAIN . '/paiement/success?commande_id=' . $commande->getId(),
             'cancel_url' => $YOUR_DOMAIN . '/paiement/cancel',
         ]);
         
@@ -124,11 +123,31 @@ class PaymentController extends AbstractController
         return $this->redirect($checkout_session->url, 303);
     }
 
-    #[Route('paiement/success', 'paiement.success')]
-    public function success(): Response
+    #[Route('/paiement/success', name: 'paiement.success')]
+    public function success(Request $request, CommandeRepository $commandeRepository, EntityManagerInterface $em): Response
     {
-        return $this->render('pages/paiement/success.html.twig');
-    }    
+        // Récupérer l'ID de la commande depuis les paramètres de l'URL
+        $commandeId = $request->query->get('commande_id');
+        $commande = $commandeRepository->find($commandeId);
+    
+        if (!$commande) {
+            throw $this->createNotFoundException('Commande non trouvée');
+        }
+    
+        // Vérifier si le statut de la commande est encore "En attente"
+        if ($commande->getStatus() === StatutCommande::EN_ATTENTE) {
+            // Mettre à jour le statut de la commande à "Validée"
+            $commande->setStatus(StatutCommande::VALIDEE);
+            $em->persist($commande);
+            $em->flush();
+        }
+    
+        // Afficher la vue de succès pour l'utilisateur
+        return $this->render('pages/paiement/success.html.twig', [
+            'commande' => $commande
+        ]);
+    }
+    
     
     #[Route('paiement/cancel', 'paiement.cancel')]
     public function cancel(): Response
@@ -164,46 +183,64 @@ class PaymentController extends AbstractController
     // de type "checkout.session.completed", et met à jour le statut des commandes dans la base de données.
 
     #[Route('/webhook', name: 'stripe_webhook')]
-    public function handleStripeWebhook(Request $request, CommandeRepository $commandeRepository): Response
-    {
+    public function handleStripeWebhook(
+        Request $request, 
+        CommandeRepository $commandeRepository, 
+        EntityManagerInterface $em
+    ): Response {
         Stripe::setApiKey($_ENV['STRIPE_SECRET_KEY']);
+        
         // Récupérer la clé secrète du webhook
         $endpointSecret = $_ENV['STRIPE_WEBHOOK_SECRET'];
     
         $payload = $request->getContent();
         $sigHeader = $request->headers->get('stripe-signature');
-        $event = null;
     
         try {
-            // Vérification de la signature du webhook
-            $event = Webhook::constructEvent(
-                $payload,
-                $sigHeader,
-                $endpointSecret
-            );
+            // Vérification de la signature Stripe
+            $event = Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
         } catch (\UnexpectedValueException $e) {
-            // Payload invalide
             return new Response('Invalid payload', 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            // Signature invalide
             return new Response('Invalid signature', 400);
         }
     
-        // Traiter les événements
+        // Traiter l'événement de paiement réussi
         if ($event->type === 'checkout.session.completed') {
             $session = $event->data->object;
-        
-            // Récupération des métadonnées
+    
+            // Vérification de la présence des métadonnées
+            if (!isset($session->metadata->commande_id)) {
+                return new Response('Commande ID manquant', 400);
+            }
+    
             $commandeId = $session->metadata->commande_id;
             $commande = $commandeRepository->find($commandeId);
-
+    
             if ($commande) {
+                // Récupérer l'adresse de facturation depuis Stripe
+                $billingAddress = $session->customer_details->address;
+    
+                if ($billingAddress) {
+                    // Vérification et construction de l'adresse proprement
+                    $adresseFacturation = trim(($billingAddress->line1 ?? '') . ' ' . ($billingAddress->line2 ?? ''))
+                                          . ', ' . $billingAddress->city
+                                          . ', ' . $billingAddress->postal_code
+                                          . ', ' . $billingAddress->country;
+    
+                    // Mettre à jour l'adresse de facturation
+                    $commande->setAdresseFacturation($adresseFacturation);
+                }
+    
+                // Mettre à jour le statut de la commande à "Validée"
                 $commande->setStatus(StatutCommande::VALIDEE);
-                $this->em->persist($commande);
-                $this->em->flush();
+    
+                // Sauvegarder en base de données
+                $em->persist($commande);
+                $em->flush();
             }
         }
     
-    return new Response('Webhook handled', 200);
+        return new Response('Webhook handled', 200);
     }
 }

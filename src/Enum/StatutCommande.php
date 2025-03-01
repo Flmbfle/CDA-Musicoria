@@ -7,6 +7,7 @@ enum StatutCommande: string
     case EN_ATTENTE = 'En attente';
     case VALIDEE = 'Validé';
     case ANNULE = 'Annulé';
+    case ENVOYE = 'Envoyé';
     case LIVRÉE = 'Livré';
 
     public function label(): string
@@ -15,6 +16,8 @@ enum StatutCommande: string
             self::EN_ATTENTE => 'En attente',
             self::VALIDEE => 'Validé',
             self::ANNULE => 'Annulé',
+            self::ENVOYE => 'Envoyé',
+            self::LIVRÉE => 'Livré',
         };
     }
 }

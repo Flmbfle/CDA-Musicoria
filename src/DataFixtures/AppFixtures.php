@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use GuzzleHttp\Client;
+use App\Entity\Adresse;
 use App\Entity\Produit;
 use App\Entity\Categorie;
 use App\Entity\Fournisseur;
@@ -128,6 +129,13 @@ class AppFixtures extends Fixture
         for ($u = 0; $u < 10; $u++) {
             $user = new Utilisateur();
 
+            // Création d'une nouvelle adresse
+            $adresse = new Adresse();
+            $adresse->setLigne1($this->faker->streetAddress())
+                    ->setVille($this->faker->city())
+                    ->setCodePostal($this->faker->postcode())
+                    ->setPays($this->faker->country());
+
             // Génération des données
             $user->setEmail($this->faker->unique()->email())
                 ->setTypeUtilisateur($this->faker->randomElement([TypeUtilisateur::PARTICULIER, TypeUtilisateur::PROFESSIONNEL]))
@@ -136,14 +144,19 @@ class AppFixtures extends Fixture
                 ->setRoles(['ROLE_CLIENT'])
                 ->setTelephone($this->faker->phoneNumber())
                 ->setCoefficient($this->faker->randomFloat(2, 1, 5))
-                ->setAdresse($this->faker->address())
+                ->setAdresse($adresse)
                 ->setVerified($this->faker->boolean())
                 ->setPlainPassword('password');
 
             $manager->persist($user);
         }
 
-        $user = new Utilisateur();
+        $user = new Utilisateur();  
+        $adresse = new Adresse();
+        $adresse->setLigne1($this->faker->streetAddress())
+                ->setVille($this->faker->city())
+                ->setCodePostal($this->faker->postcode())
+                ->setPays($this->faker->country());
 
         // Génération des données pour l'admin
         $user->setEmail('admin@musicoria.fr')
@@ -153,7 +166,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN'])
             ->setTelephone($this->faker->phoneNumber())
             ->setCoefficient($this->faker->randomFloat(2, 1, 5))
-            ->setAdresse($this->faker->address())
+            ->setAdresse($adresse)
             ->setVerified(true)
             ->setPlainPassword('admin');
 

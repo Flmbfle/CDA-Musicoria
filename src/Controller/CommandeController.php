@@ -3,19 +3,24 @@
 namespace App\Controller;
 
 use DateTimeZone;
-use App\Entity\Panier;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use DateTimeImmutable;
-use App\Entity\Produit;
+use App\Entity\Adresse;
 use App\Entity\Commande;
+use App\Form\AdresseType;
 use Ramsey\Uuid\Guid\Guid;
 use App\Entity\Utilisateur;
+use App\Service\PDFService;
 use App\Enum\StatutCommande;
 use App\Entity\PanierProduit;
 use App\Repository\ProduitRepository;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UtilisateurRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +29,27 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class CommandeController extends AbstractController
 {
-    #[Route('commande/ajout', 'commande.ajout')]
+    #[Route('commande/ajout', 'commande.ajout', requirements: ['type' => 'facturation|livraison'])]
     public function creerCommande(ProduitRepository $produitRepository, EntityManagerInterface $em)
     {
         $user = $this->getUser();
+
         if (!$user instanceof Utilisateur) {
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
+
+        $adresseLivraison = $em->getRepository(Adresse::class)->findOneBy([
+            'utilisateur' => $user,
+            'isFacturation' => false
+        ]);
+        
+        if (!$adresseLivraison) {
+            $this->addFlash('error', 'Veuillez ajouter une adresse de livraison avant de valider votre commande.');
+            return $this->redirectToRoute('commande.adresse', ['type' => 'livraison']);
+        }
+
+        // Récupération de l'adresse de facturation via Stripe (plus tard)
+        $adresseFacturation = null;
         
         // Récupérer le panier stocké
         $panier = $user->getPanierActif();
@@ -41,6 +60,7 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('panier');
         }
         $timezone = new DateTimeZone('Europe/Paris'); 
+
         // Créer une nouvelle commande
         $commande = new Commande();
         $commande->setUtilisateur($user)
@@ -81,6 +101,7 @@ class CommandeController extends AbstractController
         $commande->setPrixHT($totalHT);
         $commande->setPrixTTC($totalTTC);
         $commande->setPanier($panier);
+        $commande->setAdresse($adresseLivraison);
         // dd($commande);
 
         // Sauvegarder la commande dans la base de données
@@ -104,7 +125,6 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/commande/{id}', name: 'commande.details', requirements: ['id' => '\d+'])]
-    #[ParamConverter('commande', Commande::class)]    
     public function afficherCommande(CommandeRepository $commandeRepository, int $id)
     {
         // Récupérer la commande en fonction de l'ID
@@ -180,5 +200,75 @@ class CommandeController extends AbstractController
             'statutCommande' => $statutCommande
         ]);
     }
+
+    #[Route('/commande/adresse/{type}', name: 'commande.adresse')]
+public function adresseForm(
+    Request $request, 
+    EntityManagerInterface $em, 
+    CommandeRepository $commandeRepository, 
+    string $type
+) {
+    $user = $this->getUser();
+    
+    if (!$user) {
+        return $this->redirectToRoute('app_login');
+    }
+
+    $adresse = new Adresse();
+    $adresse->setUtilisateur($user);
+    $adresse->setIsFacturation($type === 'facturation');
+
+    $form = $this->createForm(AdresseType::class, $adresse);
+    $form->handleRequest($request);
+
+    // 🔹 Récupération de la dernière commande en attente de l'utilisateur
+    $commande = $commandeRepository->findOneBy(
+        ['utilisateur' => $user, 'status' => StatutCommande::EN_ATTENTE], 
+        ['createdAt' => 'DESC']
+    );
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $em->persist($adresse);
+        $em->flush();
+
+        $this->addFlash('success', 'Adresse ajoutée avec succès!');
+
+        // 🔹 Vérification et redirection vers le paiement si une commande existe
+        if ($commande) {
+            return $this->redirectToRoute('commande.paiement', ['id' => $commande->getId()]);
+        }
+
+        return $this->redirectToRoute('commande.ajout');
+    }
+
+    return $this->render('pages/commande/adresse.html.twig', [
+        'form' => $form->createView(),
+        'type' => $type,
+        'commande' => $commande // 🔹 On passe la commande à la vue
+    ]);
+}
+
+    
+    
+    #[Route('/commande/{id}/facture', name: 'commande.facture')]
+    public function generateInvoice(int $id, CommandeRepository $commandeRepository, PDFService $pdfService): Response
+    {
+        $commande = $commandeRepository->find($id);
+        if (!$commande) {
+            throw $this->createNotFoundException('Commande non trouvée');
+        }
+        return $pdfService->generateInvoice($commande);
+    }
+
+    #[Route('/commande/{id}/bon-livraison', name: 'commande.bon_livraison')]
+    public function generateDeliveryNote(int $id, CommandeRepository $commandeRepository, PDFService $pdfService): Response
+    {
+        $commande = $commandeRepository->find($id);
+        if (!$commande) {
+            throw $this->createNotFoundException('Commande non trouvée');
+        }
+        return $pdfService->generateDeliveryNote($commande);
+    }
+
 
 }

@@ -60,9 +60,9 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private array $roles = [];
 
-    #[ORM\Column(length: 500)]
-    #[Assert\NotNull()]
-    private ?string $adresse = null;
+    #[ORM\OneToOne(targetEntity: Adresse::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'adresse_id', referencedColumnName: 'id')]
+    private ?Adresse $adresse = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     #[Assert\NotNull()]
@@ -194,6 +194,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return $this->prenom . ' ' . $this->nom;
+    }
+
+
     public function getTelephone(): ?string
     {
         return $this->telephone;
@@ -231,17 +237,17 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAdresse(): ?string
+    public function getAdresse(): ?Adresse
     {
         return $this->adresse;
     }
 
-    public function setAdresse(string $adresse): static
+    public function setAdresse(?Adresse $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
+    
 
     public function isVerified(): bool
     {
