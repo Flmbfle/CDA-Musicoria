@@ -50,10 +50,13 @@
             </div>
         </div>
     </section>
-    {# !!! Mettre en ADMIN only !!! #}
-    {# <section>
-        <a href="{{ path('produit.nouveau')}}" class="btn btn-info">Nouveau produit</a>
-    </section> #}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <section>
+            <a href="{{ path('produit.nouveau')}}" class="btn btn-info">Nouveau produit</a>
+        </section>
+    {% endif %}
+
 
     <section id="productList" class="product-list col-12">
         <div class="container col-md-11 mx-auto my-4">

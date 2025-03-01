@@ -1,0 +1,50 @@
+Cahier des charges fonctionnel détaillé
+
+1. Présentation générale
+Le projet consiste à créer une plateforme e-commerce et une application mobile, permettant la gestion des commandes et des facturations pour Musicoria, aussi bien pour les clients particuliers que professionnels.
+
+2. Objectifs fonctionnels
+Site e-commerce :
+
+Afficher et gérer un catalogue produit organisé par rubriques et sous-rubriques.
+Permettre aux clients de créer un compte (particuliers uniquement).
+Gestion des commandes en ligne, avec options de paiement pour les particuliers via Stripe.
+Réduction appliquée aux clients professionnels via les commerciaux.
+Gestion des commandes partiellement livrées avec édition des bons de livraison et facturation globale.
+Consultation des commandes précédentes.
+
+Application mobile (clients particuliers) :
+
+Parcourir le catalogue.
+Consultation de l’historique des commandes.
+Connexion pour consulter les informations de profil.
+
+Gestion commerciale interne :
+
+Ajouter, modifier, supprimer des produits.
+Modifier l’arborescence des catégories de produits.
+Système de gestion de stock en temps réel.
+
+Tableau de bord avec indicateurs de performance :
+Chiffre d’affaires mensuel.
+Top 10 des produits les plus vendus et les plus rémunérateurs.
+Top 10 des clients par nombre de commandes ou chiffre d’affaires.
+Répartition des ventes par type de client.
+Nombre de commandes en cours de livraison.
+Gestion des rôles et des utilisateurs (ex. : administrateurs, commerciaux).
+
+3. Spécifications techniques
+
+Back-end : Symfony (PHP), base de données MySQL ou PostgreSQL.
+
+Front-end : Bootstrap pour la responsivité, JavaScript pour l’interactivité.
+
+Paiement : Intégration de Stripe via symfony/stripe-bundle.
+
+Livraison : Gestion locale avec possibilité d’ajouter des intégrations externes.
+
+Tableau de bord : Affichage en temps réel avec Chart.js et DataTables.
+
+Support multilingue : Composant Translation de Symfony pour ajouter plusieurs langues.
+
+Application mobile : Utilisation de React Native (ou Ionic) pour une application mobile compatible iOS et Android.

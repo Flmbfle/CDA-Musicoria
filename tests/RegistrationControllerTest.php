@@ -13,6 +13,12 @@ class RegistrationControllerTest extends WebTestCase
     private KernelBrowser $client;
     private UtilisateurRepository $userRepository;
 
+    protected static function getKernelClass(): string
+    {
+        return \App\Kernel::class;
+    }
+
+
     protected function setUp(): void
     {
         $this->client = static::createClient();

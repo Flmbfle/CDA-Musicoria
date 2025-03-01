@@ -7,6 +7,9 @@ Pour se connecter au container symfony :
 Installer composer :
     composer install
 
+Si probleme pour installer :
+    git config --global --add safe.directory /var/www/html
+
 Pour crée la base et les fixtures utiliser : 
     composer fixtures
 

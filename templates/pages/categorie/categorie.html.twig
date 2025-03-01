@@ -25,10 +25,12 @@
         </div>
     </div>
 </section> #}
-    {# !!! Mettre en ADMIN only !!! #}
-    {# <section>
-        <a href="{{ path('categorie.nouveau')}}" class="btn btn-info">Nouvelle catégorie</a>
-    </section> #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <section>
+            <a href="{{ path('categorie.nouveau')}}" class="btn btn-info">Nouvelle catégorie</a>
+        </section>
+    {% endif %}
+
 <section id="categorieList" class="categorie-list col-12 pt-5">
     <div class="container col-10 mx-auto my-4">
         {% for row in categories|slice(0, 6)|batch(2) %}

@@ -43,24 +43,7 @@ class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/produit/{slug}', 'produit.detail')]
-    public function detail(string $slug): Response
-    {
-        // Récupérer le produit à partir du slug
-        $produit = $this->em
-            ->getRepository(Produit::class)
-            ->findOneBySlug($slug);
-
-        if (!$produit) {
-            throw $this->createNotFoundException('Produit non trouvé');
-        }
-        // dd($produit);
-        // Afficher la vue de détail du produit
-        return $this->render('pages/produit/detail.html.twig', [
-            'produit' => $produit,
-        ]);
-    }
-
+    
     /**
      * Cette fonction affiche un formulaire de création de produit
      *
@@ -73,26 +56,44 @@ class ProduitController extends AbstractController
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
-
+        
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
             $produit = $form->getData();
-
+            
             $manager->persist($produit);
             $manager->flush();
-
+            
             $this->addFlash(
                 'success',
                 'Votre produit à été ajouté avec succès !'
             );
-
+            
             return $this->redirectToRoute('produit');
         }
         
         // dd($produit);
         return $this->render('pages/produit/nouveau.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+    
+    #[Route('/produit/{slug}', 'produit.detail')]
+    public function detail(string $slug): Response
+    {
+        // Récupérer le produit à partir du slug
+        $produit = $this->em
+            ->getRepository(Produit::class)
+            ->findOneBy(['slug' => $slug]);
+
+        if (!$produit) {
+            throw $this->createNotFoundException('Produit non trouvé');
+        }
+        // dd($produit);
+        // Afficher la vue de détail du produit
+        return $this->render('pages/produit/detail.html.twig', [
+            'produit' => $produit,
         ]);
     }
 
