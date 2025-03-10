@@ -8,7 +8,8 @@
         <div class="alert alert-warning text-center">
             <h2>Votre panier est vide !</h2>
             <br>
-            <p>Il est temps de découvrir nos produits ! <a href="{{ path('produit') }}">Cliquez ici pour faire vos achats</a>.</p>
+            <p>Il est temps de découvrir nos produits ! <a href="{{ path('produit') }}" class="text-decoration-none">Cliquez ici pour faire vos achats</a>.</p>
+            <button class="btn btn-dark"><a class="text-white text-decoration-none" href="{{ path('commande.historique') }}">Historique de mes commandes</a></button>
         </div>
     {% else %}
     <h1 class="mb-4">Votre Panier</h1>

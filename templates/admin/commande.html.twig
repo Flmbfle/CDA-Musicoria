@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Toutes les Commandes{% endblock %}
+
+{% block body %}
+    <h1>Toutes les commandes</h1>
+
+    <table class="table text-center">
+        <thead>
+            <tr class="table-dark">
+                <th class="py-3">Ref</th>
+                <th class="py-3">Utilisateur</th>
+                <th class="py-3">Prix Total</th>
+                <th class="py-3">Status</th>
+                <th class="py-3">Date de Création</th>
+                <th class="py-3">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for commande in commandes %}
+                <tr>
+                    <td>{{ commande.reference }}</td>
+                    <td>{{ commande.utilisateur.nom }}</td>
+                    <td>{{ commande.prixTTC }} €</td>
+                    <td>{{ commande.status.value }}</td>
+                    <td>{{ commande.createdAt|date('d/m/Y H:i') }}</td>
+                    <td>
+                        <a href="{{ path('commande.details', { id: commande.id }) }}" class="btn btn-sm btn-info">Voir</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

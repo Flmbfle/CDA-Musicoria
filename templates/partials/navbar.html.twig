@@ -30,10 +30,23 @@
                         {# <a class="nav-link {% if app.request.get('_route') == 'app_contact' %}active{% endif %}" href="{{ path('app_contact') }}">Contact</a> #}
                     </li>
                     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                        <li class="nav-item ">
-                            <a class="nav-link {% if app.request.attributes.get('_route') == 'profil-' %}active{% endif %}" href="{{ path('profil') }}">Profil</a>
-                        </li>
-                        {% else %}
+                        <div class="dropdown">
+                            <!-- Bouton dropdown avec les mêmes styles que les éléments de la navbar -->
+                            <button class="btn btn-sm nav-link dropdown-toggle" type="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Mon compte
+                            </button>
+                            
+                            <!-- Liste des éléments du dropdown avec les mêmes couleurs -->
+                            <ul class="dropdown-menu bg-charcoal" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'commande.historique' %}active{% endif %}" href="{{ path('commande.historique') }}">Mes commandes</a></li>
+                                <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'profil' %}active{% endif %}" href="#">Mon profil</a></li>
+                                <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'security.logout' %}active{% endif %}" href="{{ path('security.logout') }}">Se déconnecter</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                <li><a class="dropdown-item gold" href="{{ path('admin.dashboard') }}">Dashboard Admin</a>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    {% else %}
                         <li class="nav-item ">
                             <a class="nav-link {% if app.request.attributes.get('_route') == 'security.login' %}active{% endif %}" href="{{ path('security.login') }}">Connexion</a>
                         </li>

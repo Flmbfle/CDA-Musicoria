@@ -10,14 +10,13 @@
         </div>
     {% endfor %}
 
+    <div>
+        
+        <a class="btn btn-dark text-white" href="">Editer mon profil</a></li>
+        
+    </div>
     <div class="mb-3 text-center">
         <p>Vous êtes connecté(e) en tant que {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Me déconnecter</a></p>
-    </div>
-    <div>
-        <ul>
-            <li><a href="{{ path('commande.historique') }}">Historique de mes commandes</a></li>
-            <li><a href="">Editer mon profil</a></li>
-        </ul>
     </div>
     {% if is_granted('ROLE_ADMIN') %}
         {# <a href="{{ path ('admin')}}">Gérer</a> #}

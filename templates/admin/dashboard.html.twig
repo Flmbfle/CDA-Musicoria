@@ -1,0 +1,53 @@
+{# templates/admin/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center">Dashboard Admin</h1>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistiques des commandes</h5>
+                        <p>Nombre total de commandes : {{ totalCommandes }}</p>
+                        <p><a href="{{ path('commande.liste') }}" class="btn btn-primary">Voir les commandes</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Gestion des utilisateurs</h5>
+                        <p>Nombre d'utilisateurs enregistrés : {{ totalUsers }}</p>
+                        <p><a href="{{ path('utilisateur.liste') }}" class="btn btn-primary">Voir les utilisateurs</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistiques de ventes</h5>
+                        <p>Chiffre d'affaires total : {{ totalSales }}€</p>
+                        {# <p><a href="{{ path('ventes.index') }}" class="btn btn-primary">Voir les ventes</a></p> #}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h3>Dernières alertes</h3>
+            <ul>
+                {% for alert in alerts %}
+                    <li>{{ alert }}</li>
+                {% else %}
+                    <li>Aucune alerte pour le moment.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

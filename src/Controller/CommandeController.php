@@ -267,6 +267,4 @@ public function adresseForm(
         }
         return $pdfService->generateDeliveryNote($commande);
     }
-
-
 }
