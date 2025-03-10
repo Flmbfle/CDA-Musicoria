@@ -137,9 +137,10 @@ class CommandeController extends AbstractController
     
         // Vérifiez que l'utilisateur est bien le propriétaire de la commande
         $user = $this->getUser();
-        if ($commande->getUtilisateur() !== $user) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas accéder à cette commande.');
+        if ($commande->getUtilisateur() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException("Vous ne pouvez pas accéder à cette commande.");
         }
+        
 
         $panier = $commande->getPanier();
         $statut = $commande->getStatus();

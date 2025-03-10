@@ -33,17 +33,17 @@
                         <div class="dropdown">
                             <!-- Bouton dropdown avec les mêmes styles que les éléments de la navbar -->
                             <button class="btn btn-sm nav-link dropdown-toggle" type="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                Mon compte
+                                Profil
                             </button>
                             
                             <!-- Liste des éléments du dropdown avec les mêmes couleurs -->
                             <ul class="dropdown-menu bg-charcoal" aria-labelledby="dropdownMenuLink">
                                 <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'commande.historique' %}active{% endif %}" href="{{ path('commande.historique') }}">Mes commandes</a></li>
                                 <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'profil' %}active{% endif %}" href="#">Mon profil</a></li>
-                                <li><a class="dropdown-item gold {% if app.request.attributes.get('_route') == 'security.logout' %}active{% endif %}" href="{{ path('security.logout') }}">Se déconnecter</a></li>
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <li><a class="dropdown-item gold" href="{{ path('admin.dashboard') }}">Dashboard Admin</a>
+                                    <li><a class="dropdown-item gold" href="{{ path('admin.dashboard') }}">Dashboard Admin</a>
                                 {% endif %}
+                                <li><a class="dropdown-item gold  {% if app.request.attributes.get('_route') == 'security.logout' %}active{% endif %}" href="{{ path('security.logout') }}">Se déconnecter</a></li>
                             </ul>
                         </div>
                     {% else %}
