@@ -38,10 +38,11 @@ class CommandeController extends AbstractController
             throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
 
-        $adresseLivraison = $em->getRepository(Adresse::class)->findOneBy([
-            'utilisateur' => $user,
-            'isFacturation' => false
-        ]);
+        $adresseLivraison = $em->getRepository(Adresse::class)->findOneBy(
+            ['utilisateur' => $user, 'isFacturation' => false],
+            ['id' => 'DESC'] // ou ['createdAt' => 'DESC'] si vous avez ce champ
+        );
+        
         
         if (!$adresseLivraison) {
             $this->addFlash('error', 'Veuillez ajouter une adresse de livraison avant de valider votre commande.');
@@ -230,15 +231,11 @@ public function adresseForm(
     if ($form->isSubmitted() && $form->isValid()) {
         $em->persist($adresse);
         $em->flush();
-
+    
         $this->addFlash('success', 'Adresse ajoutée avec succès!');
-
-        // 🔹 Vérification et redirection vers le paiement si une commande existe
-        if ($commande) {
-            return $this->redirectToRoute('commande.paiement', ['id' => $commande->getId()]);
-        }
-
-        return $this->redirectToRoute('commande.ajout');
+    
+        // Rediriger vers la création de la commande (le panier sera validé et la commande créée avec cette adresse)
+        return $this->redirectToRoute('commande.ajout', ['type' => 'livraison']);
     }
 
     return $this->render('pages/commande/adresse.html.twig', [
@@ -254,6 +251,7 @@ public function adresseForm(
     public function generateInvoice(int $id, CommandeRepository $commandeRepository, PDFService $pdfService): Response
     {
         $commande = $commandeRepository->find($id);
+        // dd($commande);
         if (!$commande) {
             throw $this->createNotFoundException('Commande non trouvée');
         }

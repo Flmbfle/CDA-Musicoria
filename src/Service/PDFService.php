@@ -113,7 +113,7 @@ class PDFService
     
         // Vérifier les adresses et utiliser celle avec getIsFacturation() == true
         $adresseFacturation = null;
-        foreach ($utilisateur->getAdresse() as $adresse) {
+        foreach ($utilisateur->getAdresses() as $adresse) {
             if ($adresse->getIsFacturation()) {
                 $adresseFacturation = $adresse;
                 break;
@@ -126,8 +126,8 @@ class PDFService
             if ($adresseFacturation->getLigne2()) {
                 $adresseComplete .= ' ' . $adresseFacturation->getLigne2();
             }
-            $adresseComplete .= ' ' . $adresseFacturation->getCodePostal() . ' ' . $adresseFacturation->getVille();
-            $adresseComplete .= ' ' . $adresseFacturation->getPays();
+            $adresseComplete .= ' <br> ' . $adresseFacturation->getCodePostal() . ' , ' . $adresseFacturation->getVille();
+            $adresseComplete .= ' <br> ' . $adresseFacturation->getPays();
             
             $html .= '<h3>Adresse de facturation</h3>';
             $html .= '<p>' . $adresseComplete . '</p>';
@@ -137,20 +137,29 @@ class PDFService
         }
     
         // Adresse de livraison
-        $adresseLivraison = $utilisateur->getAdresse(); // Supposons que getAdresse() renvoie l'adresse de livraison
+        $adresseLivraison = null;
+        foreach ($utilisateur->getAdresses() as $adresse) {
+            // Utilisation de getIsFacturation() pour vérifier, si ce n'est pas une adresse de facturation (donc c'est une adresse de livraison)
+            if (!$adresse->getIsFacturation()) {
+                $adresseLivraison = $adresse;
+                break; // On sort de la boucle dès qu'on a trouvé une adresse de livraison
+            }
+        }
         
+        // Vérifier si une adresse de livraison a été trouvée
         if ($adresseLivraison) {
             $adresseComplete = $adresseLivraison->getLigne1();
             if ($adresseLivraison->getLigne2()) {
                 $adresseComplete .= ' ' . $adresseLivraison->getLigne2();
             }
-            $adresseComplete .= ' ' . $adresseLivraison->getCodePostal() . ' ' . $adresseLivraison->getVille();
-            $adresseComplete .= ' ' . $adresseLivraison->getPays();
+            $adresseComplete .= ' <br> ' . $adresseLivraison->getCodePostal() . ' , ' . $adresseLivraison->getVille();
+            $adresseComplete .= ' <br> ' . $adresseLivraison->getPays();
             
             $html .= '<h3>Adresse de livraison</h3>';
             $html .= '<p>' . $adresseComplete . '</p>';
         } else {
-            $html .= '<p>Adresse de livraison: Non renseignée</p>';
+            $html .= '<h3>Adresse de livraison</h3>';
+            $html .= '<p>Non renseignée</p>';
         }
     
         // Tableau des produits

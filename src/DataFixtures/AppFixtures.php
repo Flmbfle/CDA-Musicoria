@@ -144,7 +144,7 @@ class AppFixtures extends Fixture
                 ->setRoles(['ROLE_CLIENT'])
                 ->setTelephone($this->faker->phoneNumber())
                 ->setCoefficient($this->faker->randomFloat(2, 1, 5))
-                ->setAdresse($adresse)
+                ->addAdresse($adresse)
                 ->setVerified($this->faker->boolean())
                 ->setPlainPassword('password');
 
@@ -166,7 +166,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN'])
             ->setTelephone($this->faker->phoneNumber())
             ->setCoefficient($this->faker->randomFloat(2, 1, 5))
-            ->setAdresse($adresse)
+            ->addAdresse($adresse)
             ->setVerified(true)
             ->setPlainPassword('admin');
 

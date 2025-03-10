@@ -49,11 +49,9 @@
 
     {% if statut.value == 'En attente' %}
         <div class="d-flex justify-content-end mt-4">
-            <a href="{{ path('commande.adresse', {'type': 'livraison'}) }}" class="btn btn-outline-success btn">Renseigner l'adresse de livraison</a>
+            <a href="{{ path('commande.paiement', {'id': commande.id}) }}" class="btn btn-outline-success btn">Payer</a>
         </div>
     {% endif %}
-
-
 
     </div>
 </section>

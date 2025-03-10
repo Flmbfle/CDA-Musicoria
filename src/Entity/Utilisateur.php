@@ -60,9 +60,8 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private array $roles = [];
 
-    #[ORM\OneToOne(targetEntity: Adresse::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'adresse_id', referencedColumnName: 'id')]
-    private ?Adresse $adresse = null;
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Adresse::class, cascade: ['persist', 'remove'])]
+    private Collection $adresses;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     #[Assert\NotNull()]
@@ -237,14 +236,30 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAdresse(): ?Adresse
+    public function getAdresses(): Collection
     {
-        return $this->adresse;
+        return $this->adresses;
     }
 
-    public function setAdresse(?Adresse $adresse): static
+    public function addAdresse(Adresse $adresse): self
     {
-        $this->adresse = $adresse;
+        if (!$this->adresses->contains($adresse)) {
+            $this->adresses[] = $adresse;
+            $adresse->setUtilisateur($this);
+        }
+    
+        return $this;
+    }
+    
+    public function removeAdresse(Adresse $adresse): self
+    {
+        if ($this->adresses->removeElement($adresse)) {
+            // Supprime l'association si nécessaire
+            if ($adresse->getUtilisateur() === $this) {
+                $adresse->setUtilisateur(null);
+            }
+        }
+    
         return $this;
     }
     
