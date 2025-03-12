@@ -46,17 +46,19 @@
                 </tr>
             </tfoot>
         </table>
-        <div class="text-end">
-            <a href="{{ path('commande.facture', {'id': commande.id}) }}" class="btn btn-info">Télécharger la facture</a>
-            <a href="{{ path('commande.bon_livraison', {'id': commande.id}) }}" class="btn btn-info">Télécharger le bon de livraison</a>
-        </div>
-        
-    {% if statut.value == 'En attente' %}
-        <div class="d-flex justify-content-end mt-4">
-            <a href="{{ path('commande.paiement', {'id': commande.id}) }}" class="btn btn-outline-success btn">Payer</a>
-        </div>
-    {% endif %}
+        {% if statut.value == 'Validé' %}
+            <div class="text-end">
+                <a href="{{ path('commande.facture', {'id': commande.id}) }}" class="btn btn-info">Télécharger la facture</a>
 
+                {# Non activé #}
+                <a href="{{ path('commande.bon_livraison', {'id': commande.id}) }}" class="btn btn-info disabled" style="pointer-events: none; opacity: 0.5;">Télécharger le bon de livraison</a>
+            </div>
+        {% endif %}
+        {% if statut.value == 'En attente' %}
+            <div class="d-flex justify-content-end mt-4">
+                <a href="{{ path('commande.paiement', {'id': commande.id}) }}" class="btn btn-outline-success btn">Payer</a>
+            </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

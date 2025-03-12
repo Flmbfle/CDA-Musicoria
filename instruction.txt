@@ -16,6 +16,11 @@ Pour crée la base et les fixtures utiliser :
 Lancer le serveur web:
     php -S 0.0.0.0:8000 -t public
 
+Ecouter les mails sur mailpit :
+
+http://localhost:32769
+
+
 Pour Lancer et faire fonctionner normalement le paiement et les webhook , utiliser ngrok:
     curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
 	    | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \

@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class RegistrationType extends AbstractType
 {
@@ -116,22 +117,6 @@ class RegistrationType extends AbstractType
                     ])
                 ]
             ])
-
-            ->add('adresse', TextareaType::class, [
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Entrez votre adresse complète'
-                ],
-                'label' => 'Adresse',
-                'label_attr' => [
-                    'class' => 'form-label'
-                ],
-                'constraints' => [
-                    new Assert\NotBlank(),
-                    new Assert\Length(['min'=> 5, 'max' => 255])
-                ]
-            ])
-
             ->add('typeUtilisateur', ChoiceType::class, [
                 'choices' => TypeUtilisateur::cases(), // Génère toutes les valeurs de l'enum
                 'choice_value' => fn (?TypeUtilisateur $enum) => $enum?->value, // Valeur pour le stockage
@@ -148,13 +133,6 @@ class RegistrationType extends AbstractType
                     ]),
                 ],
             ])
-            
-            ->add('submit', SubmitType::class, [
-                'attr' => [
-                    'class' => 'form-control btn btn-dark',
-                ],
-                'label' => 'Créer un compte',
-            ]);
         ;
     }
 

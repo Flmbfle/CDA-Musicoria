@@ -85,6 +85,7 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->panier = new ArrayCollection();
         $this->commande = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
         $this->date_inscription = new \DateTimeImmutable();
     }
 

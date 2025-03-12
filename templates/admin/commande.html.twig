@@ -1,23 +1,69 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Toutes les Commandes{% endblock %}
+{% block title %}Liste des commandes{% endblock %}
 
 {% block body %}
-    <h1>Toutes les commandes</h1>
 
-    <table class="table text-center">
-        <thead>
-            <tr class="table-dark">
-                <th class="py-3">Ref</th>
-                <th class="py-3">Utilisateur</th>
-                <th class="py-3">Prix Total</th>
-                <th class="py-3">Status</th>
-                <th class="py-3">Date de Création</th>
-                <th class="py-3">Actions</th>
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h1>Liste des commandes</h1>
+
+        <!-- Formulaire de recherche -->
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Rechercher par montant ou statut">
+                <button class="btn btn-outline-primary" type="submit">Rechercher</button>
+            </div>
+        </form>
+    </div>
+    <!-- Tableau des commandes -->
+    <table class="table table-striped">
+        <thead class="thead-dark text-center align-middle">
+            <tr>
+                <th class="py-3">
+                    <a href="{{ path('commande.liste', {'sort': 'c.reference', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        REFERENCE
+                        {% if sortField == 'c.reference' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="py-3">
+                    <a href="{{ path('commande.liste', {'sort': 'u.nom', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        UTILISATEUR
+                        {% if sortField == 'u.nom' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="py-3">
+                    <a href="{{ path('commande.liste', {'sort': 'c.prixTTC', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        MONTANT
+                        {% if sortField == 'c.prixTTC' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="py-3">
+                    <a href="{{ path('commande.liste', {'sort': 'c.status', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        STATUT
+                        {% if sortField == 'c.status' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="py-3">
+                    <a href="{{ path('commande.liste', {'sort': 'c.createdAt', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        DATE
+                        {% if sortField == 'c.createdAt' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+                <th class="py-3"><span class="gold">ACTIONS</span></th>
             </tr>
         </thead>
-        <tbody>
-            {% for commande in commandes %}
+        <tbody class="text-center align-middle">
+            {% for commande in pagination %}
                 <tr>
                     <td>{{ commande.reference }}</td>
                     <td>{{ commande.utilisateur.nom }}</td>
@@ -25,10 +71,15 @@
                     <td>{{ commande.status.value }}</td>
                     <td>{{ commande.createdAt|date('d/m/Y H:i') }}</td>
                     <td>
-                        <a href="{{ path('commande.details', { id: commande.id }) }}" class="btn btn-sm btn-info">Voir</a>
+                        <a href="{{ path('commande.details', {id: commande.id}) }}" class="btn btn-info">Détails</a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {{ knp_pagination_render(pagination) }}
+    </div>
 {% endblock %}

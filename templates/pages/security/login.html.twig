@@ -1,33 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion{% endblock %}
 
 {% block body %}
     <section>
-        <form action="{{ path('security.login') }}" method="post">
+        <form class="border rounded rounded-3 px-5 my- shadow" action="{{ path('security.login') }}" method="post">
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
     
             {% if app.user %}
                 <div class="mb-3">
-                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Logout</a>
+                    Vous êtes connecté(e) comme {{ app.user.userIdentifier }}, <a href="{{ path('security.logout') }}">Se déconnecter</a>
                 </div>
             {% endif %}
     
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-            <label for="username">Adresse email</label>
-            <input type="email" name="_username" id="inputEmail" class="form-control" autocomplete="email" placeholder="example@musicoria.fr" valur="{{last_username}}" required autofocus>
-    
-            <label for="password">Mot de passe</label>
-            <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" placeholder="********" required>
-    
+            <h1 class="h3 my-4 font-weight-normal">Connexion</h1>
+
+            <div class="mb-3">
+                <label class="form-label" for="username ">Adresse email</label>
+                <input type="email" name="_username" id="inputEmail" class="form-control shadow" autocomplete="email" placeholder="example@musicoria.fr" valur="{{last_username}}" required autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="password">Mot de passe</label>
+                <input type="password" name="_password" id="password" class="form-control shadow" autocomplete="current-password" placeholder="********" required> 
+            </div>
+
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
     
-            <button class="btn btn-lg btn-primary" type="submit">
-                Se connecter
-            </button>
+            <div class="d-flex justify-content-between my-4 align-items-center">
+                <sm>Vous n’avez pas de compte ? <a href="{{ path('security.registration') }}">Inscrivez-vous</a></sm>
+                <button class="btn btn-primary text-end" type="submit">
+                    Se connecter
+                </button>
+            </div>
         </form>
-        <p>Vous n’avez pas de compte ? <a href="{{ path('security.registration') }}">Inscrivez-vous</a></p>
     </section>
 {% endblock %}

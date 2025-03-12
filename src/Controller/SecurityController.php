@@ -55,24 +55,25 @@ class SecurityController extends AbstractController
      * @return Response
      */
     #[Route('/inscription', 'security.registration', methods: ['GET', 'POST'])]
-    public function registration(Request $request, EntityManagerInterface $manager): Response
+    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new Utilisateur();
         $user->setRoles(['ROLE_USER']);
 
         $form = $this->createForm(RegistrationType::class, $user);
-
         $form->handleRequest($request);
+        
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+            // Hashing du mot de passe
+            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
 
-            $this->addFlash(
-                'success',
-                'Votre compte a bien été créé.'
-            );
-
+            // Persist user in the database
             $manager->persist($user);
             $manager->flush();
+
+            // Flash message et redirection vers la page de login
+            $this->addFlash('success', 'Votre compte a bien été créé. Un email de confirmation vous a été envoyé.');
 
             return $this->redirectToRoute('security.login');
         }

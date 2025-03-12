@@ -7,6 +7,8 @@ use App\Entity\Utilisateur;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UtilisateurRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,25 +36,96 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/admin/utilisateurs', name: 'utilisateur.liste')]
-    public function utilisateurListe(EntityManagerInterface $manager): Response
+    public function utilisateurListe(EntityManagerInterface $manager, Request $request, PaginatorInterface $paginator): Response
     {
-        // Récupère tous les utilisateurs
-        $utilisateurs = $manager->getRepository(Utilisateur::class)->findAll();
-
+        // Vérification des droits d'accès
+        $this->denyAccessUnlessGranted('ROLE_ADMIN'); // Vérifie que l'utilisateur est un admin
+    
+        // Récupérer les critères de recherche et de tri depuis la requête GET
+        $search = $request->query->get('search');
+        $sortField = $request->query->get('sort', 'u.nom'); // Champ de tri (par défaut tri par nom)
+        $sortDirection = $request->query->get('direction', 'ASC'); // Direction de tri (par défaut ASC)
+    
+        // Créer la requête de base
+        $queryBuilder = $manager->getRepository(Utilisateur::class)->createQueryBuilder('u');
+    
+        // Ajouter un filtre de recherche si le paramètre 'search' est présent
+        if ($search) {
+            $queryBuilder->where('u.nom LIKE :search')
+                         ->orWhere('u.email LIKE :search') // Recherche sur email aussi
+                         ->setParameter('search', '%' . $search . '%');
+        }
+    
+        // Ajouter la clause de tri en fonction des paramètres
+        if ($sortField === 'u.nom') {
+            $queryBuilder->orderBy('u.nom', $sortDirection);
+        } elseif ($sortField === 'u.email') {
+            $queryBuilder->orderBy('u.email', $sortDirection);
+        } else {
+            $queryBuilder->orderBy($sortField, $sortDirection); // Si c'est un autre champ
+        }
+    
+        // Appliquer la pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder, // La requête à paginer
+            $request->query->getInt('page', 1), // Le numéro de page
+            10 // Nombre d'éléments par page
+        );
+    
+        // Rendre la vue
         return $this->render('admin/utilisateur.html.twig', [
-            'utilisateurs' => $utilisateurs,
+            'pagination' => $pagination,
+            'search' => $search,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection,
         ]);
     }
 
     #[Route('/admin/commandes', name: 'commande.liste', methods: ['GET'])]
-    public function listeCommandes(EntityManagerInterface $manager): Response
+    public function listeCommandes(EntityManagerInterface $manager, Request $request, PaginatorInterface $paginator): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN'); // Vérifie que l'utilisateur est un admin
-
-        $commandes = $manager->getRepository(Commande::class)->findAll();
-
+    
+        // Récupérer les critères de recherche et de tri depuis la requête GET
+        $search = $request->query->get('search');
+        $sortField = $request->query->get('sort', 'c.reference'); // Champ de tri (par défaut tri par référence)
+        $sortDirection = $request->query->get('direction', 'ASC'); // Direction de tri (par défaut ASC)
+    
+        // Créer la requête de base
+        $queryBuilder = $manager->getRepository(Commande::class)->createQueryBuilder('c')
+            ->leftJoin('c.utilisateur', 'u'); // Join avec l'utilisateur
+    
+        // Ajouter un filtre de recherche si le paramètre 'search' est présent
+        if ($search) {
+            $queryBuilder->where('c.reference LIKE :search')
+                         ->orWhere('u.nom LIKE :search')
+                         ->orWhere('c.prixTTC LIKE :search')
+                         ->orWhere('c.status LIKE :search') // On recherche directement sur c.status
+                         ->setParameter('search', '%' . $search . '%');
+        }
+    
+        // Ajouter la clause de tri en fonction des paramètres
+        if ($sortField === 'c.status') {
+            $queryBuilder->orderBy('c.status', $sortDirection);
+        } else {
+            $queryBuilder->orderBy($sortField, $sortDirection);
+        }
+    
+        // Appliquer la pagination
+        $pagination = $paginator->paginate(
+            $queryBuilder, // La requête à paginer
+            $request->query->getInt('page', 1), // Le numéro de page
+            10 // Nombre d'éléments par page
+        );
+    
         return $this->render('admin/commande.html.twig', [
-            'commandes' => $commandes,
+            'pagination' => $pagination,
+            'search' => $search,
+            'sortField' => $sortField,
+            'sortDirection' => $sortDirection,
         ]);
     }
+    
+    
+    
 }

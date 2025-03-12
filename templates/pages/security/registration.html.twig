@@ -7,22 +7,57 @@
         {% for flash_error in app.flashes('verify_email_error') %}
             <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
         {% endfor %}
-    
-        <h1>Formulaire d'inscription</h1>
-    
-        {# {{ form_errors(form) }}
-    
-        {{ form_start(form) }}
-            {{ form_row(form.email) }}
-            {{ form_row(form.nom) }}
-            {{ form_row(form.prenom) }}
-            {{ form_row(form.adresse)}}
-            {{ form_row(form.telephone) }}
-            {{ form_row(form.plainPassword) }}
-    
-        {{ form_end(form) }} #}
-        {{ form(form)}}
+
+
+        {{ form_start(form, {'attr': {'class': 'border rounded rounded-3 px-5 my-4 shadow needs-validation'}}) }}
+            <h1 class="h3 my-4 font-weight-normal">Inscription</h1>
         
-        <p>Vous avez déjà un compte ? <a href="{{ path('security.login') }}">Connectez-vous</a></p>
+            <div class="mb-3">
+                {{ form_label(form.email, 'Adresse email') }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control shadow', 'placeholder': 'example@musicoria.fr', 'autocomplete': 'email', 'required': 'required'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.plainPassword.first, 'Mot de passe') }}
+                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control shadow', 'placeholder': '********', 'autocomplete': 'new-password', 'required': 'required'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.plainPassword.second, 'Confirmation du mot de passe') }}
+                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control shadow', 'placeholder': '********', 'autocomplete': 'new-password', 'required': 'required'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.nom, 'Nom') }}
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control shadow', 'placeholder': 'Votre nom', 'required': 'required'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.prenom, 'Prénom') }}
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control shadow', 'placeholder': 'Votre prénom', 'required': 'required'}}) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.telephone, 'Téléphone') }}
+                {{ form_widget(form.telephone, {'attr': {'class': 'form-control shadow', 'placeholder': 'Votre numéro de téléphone'}}) }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Type d'utilisateur</label>
+                <div class="d-flex gap-3">
+                    {% for choice in form.typeUtilisateur %}
+                        <div class="form-check">
+                            {{ form_widget(choice, {'attr': {'class': 'form-check-input shadow'}}) }}
+                            {{ form_label(choice, null, {'attr': {'class': 'form-check-label'}}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        <div class="d-flex justify-content-between align-items-center my-4">
+            <small>Vous avez déjà un compte ? <a href="{{ path('security.login') }}">Connectez-vous</a></small>
+            <button class="btn btn-primary text-end" type="submit">S'inscrire</button>
+        </div>
+        {{ form_end(form) }}
     </section>
 {% endblock %}
