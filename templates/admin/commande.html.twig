@@ -27,7 +27,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th class="py-3">
+                <th class="py-3 d-none d-md-table-cell">
                     <a href="{{ path('commande.liste', {'sort': 'u.nom', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
                         UTILISATEUR
                         {% if sortField == 'u.nom' %}
@@ -35,7 +35,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th class="py-3">
+                <th class="py-3 d-none d-md-table-cell">
                     <a href="{{ path('commande.liste', {'sort': 'c.prixTTC', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
                         MONTANT
                         {% if sortField == 'c.prixTTC' %}
@@ -43,7 +43,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th class="py-3">
+                <th class="py-3 d-none d-md-table-cell">
                     <a href="{{ path('commande.liste', {'sort': 'c.status', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
                         STATUT
                         {% if sortField == 'c.status' %}
@@ -66,12 +66,12 @@
             {% for commande in pagination %}
                 <tr>
                     <td>{{ commande.reference }}</td>
-                    <td>{{ commande.utilisateur.nom }}</td>
-                    <td>{{ commande.prixTTC }} €</td>
-                    <td>{{ commande.status.value }}</td>
+                    <td class="d-none d-md-table-cell">{{ commande.utilisateur.nom }}</td>
+                    <td class="d-none d-md-table-cell">{{ commande.prixTTC }} €</td>
+                    <td class="d-none d-md-table-cell">{{ commande.status.value }}</td>
                     <td>{{ commande.createdAt|date('d/m/Y H:i') }}</td>
                     <td>
-                        <a href="{{ path('commande.details', {id: commande.id}) }}" class="btn btn-info">Détails</a>
+                        <a href="{{ path('commande.details', {id: commande.id}) }}" class="btn btn-outline-dark  bi bi-search"></a>
                     </td>
                 </tr>
             {% endfor %}

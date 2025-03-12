@@ -3,14 +3,13 @@
 {% block title %}Liste des utilisateurs{% endblock %}
 
 {% block body %}
-
-    <div class="d-flex justify-content-between align-items-center my-4">
+    <div class="d-flex align-items-center my-4 justify-content-between">
         <h1>Liste des utilisateurs</h1>
 
         <!-- Formulaire de recherche -->
-        <form method="get" class="mb-3">
+        <form method="get" class="mb-3 col-lg-4">
             <div class="input-group mt-3">
-                <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Rechercher par nom ou email">
+                <input type="text" name="search" value="{{ search }}" class="form-control col-lg-6" placeholder="Rechercher par nom ou email">
                 <button class="btn btn-outline-primary" type="submit">Rechercher</button>
             </div>
         </form>
@@ -28,7 +27,7 @@
                         {% endif %}
                     </a>
                 </th>
-                <th class="py-3">
+                <th class="py-3 d-none d-md-table-cell">
                     <a href="{{ path('utilisateur.liste', {'sort': 'u.nom', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
                         NOM
                         {% if sortField == 'u.nom' %}
@@ -51,10 +50,10 @@
             {% for utilisateur in pagination %}
                 <tr>
                     <td>{{ utilisateur.id }}</td>
-                    <td>{{ utilisateur.nom }}</td>
+                    <td class="d-none d-md-table-cell">{{ utilisateur.nom }}</td>
                     <td>{{ utilisateur.email }}</td>
                     <td>
-                        <a href="{{ path('profil.modifier', {id: utilisateur.id}) }}" class="btn btn-warning">Modifier</a>
+                        <a href="{{ path('profil.modifier', {id: utilisateur.id}) }}" class="btn btn-warning bi bi-pen"></a>
                     </td>
                 </tr>
             {% endfor %}
