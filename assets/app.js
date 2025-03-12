@@ -7,5 +7,11 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 import '../public/toast.js';
+import Chart from 'chart.js';
+import 'chartjs-plugin-datalabels';
+import 'chartjs-plugin-zoom';   
+import 'chartjs-plugin-annotation';
+import 'chartjs-plugin-streaming';
+import 'chartjs-plugin-crosshair';
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

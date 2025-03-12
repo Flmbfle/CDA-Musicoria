@@ -31,9 +31,9 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Statistiques de ventes</h5>
-                        <p>Chiffre d'affaires total : {{ totalSales }}€</p>
-                        {# <p><a href="{{ path('ventes.index') }}" class="btn btn-primary">Voir les ventes</a></p> #}
+                        <h5 class="card-title">Statistiques des Ventes</h5>
+                        <p>Chiffre d'affaire total : {{ totalSales | number_format(2, '.', ',') }} €</p>
+                        <p><a href="{{ path('admin.stats') }}" class="btn btn-primary">Voir les statistiques</a></p>
                     </div>
                 </div>
             </div>

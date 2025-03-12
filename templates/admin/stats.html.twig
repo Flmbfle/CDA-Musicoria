@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center">Dashboard Admin</h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Statistiques de ventes par produit</h5>
+                        <canvas id="ventesChart" style="height: 50vh; width: 100%;"></canvas> <!-- Taille fixe -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Fonction pour générer des couleurs aléatoires (utilisé pour générer une couleur unique pour chaque produit)
+            function generateRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+
+            // Récupérer le contexte du graphique
+            const ctx = document.getElementById('ventesChart').getContext('2d');
+
+            // Générer des couleurs dynamiques pour chaque produit (jusqu'à 50 produits)
+            const backgroundColors = [];
+            const labels = {{ labels|json_encode()|raw }};
+            for (let i = 0; i < labels.length; i++) {
+                backgroundColors.push(generateRandomColor());
+            }
+
+            const data = {
+                labels: labels,
+                datasets: [{
+                    label: 'Chiffre d\'affaires généré',
+                    data: {{ dataChiffreAffaires|json_encode()|raw }},
+                    backgroundColor: backgroundColors,  // Couleurs dynamiques
+                    hoverOffset: 4,  // Effet de zoom au survol
+                    borderColor: 'rgba(0, 0, 0, 0.2)',  // Couleur des bordures
+                    borderWidth: 2,  // Largeur de la bordure
+                }]
+            };
+
+            // Options du graphique
+            const options = {
+                responsive: false,  // Désactiver le redimensionnement automatique
+                maintainAspectRatio: false,  // Assurer que l'aspect ratio est respecté selon la taille définie
+                plugins: {
+                    datalabels: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        },
+                        formatter: (value, ctx) => {
+                            return '$' + value.toLocaleString();  // Ajouter le symbole "$" et formater le chiffre d'affaires
+                        },
+                        anchor: 'center',
+                        align: 'center'
+                    }
+                },
+                animation: {
+                    animateScale: true,  // Animation lors du chargement
+                    animateRotate: true  // Animation lors de la rotation
+                }
+            };
+
+            // Initialisation du graphique
+            const ventesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options
+            });
+        </script>
+    </div>
+{% endblock %}

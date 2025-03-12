@@ -26,4 +26,17 @@ class ProduitRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getTopSellingProducts()
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.nom, SUM(c.quantite) AS totalSold')
+            ->join('p.commandes', 'c')
+            ->groupBy('p.id')
+            ->orderBy('totalSold', 'DESC')
+            ->setMaxResults(5)  // Limiter aux 5 produits les plus vendus
+            ->getQuery()
+            ->getResult();
+    }
+
 }

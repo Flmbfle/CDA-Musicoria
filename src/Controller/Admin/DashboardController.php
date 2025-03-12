@@ -4,6 +4,8 @@ namespace App\Controller\Admin;
 
 use App\Entity\Commande;
 use App\Entity\Utilisateur;
+use App\Enum\StatutCommande;
+use App\Repository\ProduitRepository;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UtilisateurRepository;
@@ -127,5 +129,45 @@ class DashboardController extends AbstractController
     }
     
     
+    #[Route('/admin/stats', name: 'admin.stats')]
+    public function stats(CommandeRepository $commandeRepository, UtilisateurRepository $utilisateurRepository): Response
+    {
+        // Récupérer les données nécessaires pour le dashboard
+        $ventesParProduit = $commandeRepository->getVentesParProduit();
+    
+        // Récupérer le nombre total de commandes
+        $totalCommandes = $commandeRepository->createQueryBuilder('c')
+            ->select('COUNT(c.id)')  // Compte le nombre de commandes
+            ->where('c.status = :status')
+            ->setParameter('status', StatutCommande::VALIDEE)  // Commandes validées par exemple
+            ->getQuery()
+            ->getSingleScalarResult();  // Retourne un seul résultat (le total)
+        
+        // Récupérer le nombre total d'utilisateurs
+        $totalUsers = $utilisateurRepository->createQueryBuilder('u')
+        ->select('COUNT(u.id)')  // Compte le nombre d'utilisateurs
+        ->getQuery()
+        ->getSingleScalarResult();  // Retourne un seul résultat (le total)
+    
+        // Organiser les données pour Chart.js
+        $labels = [];
+        $dataQuantite = [];
+        $dataChiffreAffaires = [];
+    
+        foreach ($ventesParProduit as $vente) {
+            $labels[] = $vente['produit'];
+            $dataQuantite[] = $vente['quantiteVendue'];
+            $dataChiffreAffaires[] = $vente['chiffreAffaires'];
+        }
+    
+        // Passer les variables à la vue
+        return $this->render('admin/stats.html.twig', [
+            'labels' => $labels,
+            'dataQuantite' => $dataQuantite,
+            'dataChiffreAffaires' => $dataChiffreAffaires,
+            'totalCommandes' => $totalCommandes,  // Passer la variable au template
+            'totalUsers' => $totalUsers,  // Passer la variable au template
+        ]);
+    }
     
 }
