@@ -18,7 +18,7 @@ Lancer le serveur web:
 
 Ecouter les mails sur mailpit :
 
-http://localhost:32769
+http://localhost:8025
 
 
 Pour Lancer et faire fonctionner normalement le paiement et les webhook , utiliser ngrok:

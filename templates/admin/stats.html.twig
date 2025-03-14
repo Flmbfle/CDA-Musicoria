@@ -82,5 +82,43 @@
                 options: options
             });
         </script>
+
+        <div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Chiffre d'affaires mensuel</h5>
+                {% if chiffreAffairesMensuel is not empty %}
+                    <p>Total : {{ chiffreAffairesMensuel|last.chiffreAffaires|number_format(2, '.', ',') }} €</p>
+                {% else %}
+                    <p>Aucun chiffre d'affaires disponible pour ce mois.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Commandes en cours de livraison</h5>
+                <p>{{ commandesEnCoursLivraison }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Top 10 Produits Vendus</h5>
+                <ul>
+                    {% for produit in topProduitsVendus %}
+                        <li>{{ produit.produit }} : {{ produit.quantiteVendue }} ventes</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 {% endblock %}

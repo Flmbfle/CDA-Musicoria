@@ -38,50 +38,65 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/admin/utilisateurs', name: 'utilisateur.liste')]
-    public function utilisateurListe(EntityManagerInterface $manager, Request $request, PaginatorInterface $paginator): Response
-    {
-        // Vérification des droits d'accès
-        $this->denyAccessUnlessGranted('ROLE_ADMIN'); // Vérifie que l'utilisateur est un admin
+    public function utilisateurListe(
+        EntityManagerInterface $manager,
+        Request $request,
+        PaginatorInterface $paginator,
+        CommandeRepository $commandeRepository
+    ): Response {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
     
-        // Récupérer les critères de recherche et de tri depuis la requête GET
         $search = $request->query->get('search');
-        $sortField = $request->query->get('sort', 'u.nom'); // Champ de tri (par défaut tri par nom)
-        $sortDirection = $request->query->get('direction', 'ASC'); // Direction de tri (par défaut ASC)
+        $sortField = $request->query->get('sort', 'u.nom'); // Par défaut tri par nom
+        $sortDirection = $request->query->get('direction', 'ASC');
     
-        // Créer la requête de base
         $queryBuilder = $manager->getRepository(Utilisateur::class)->createQueryBuilder('u');
     
-        // Ajouter un filtre de recherche si le paramètre 'search' est présent
         if ($search) {
             $queryBuilder->where('u.nom LIKE :search')
-                         ->orWhere('u.email LIKE :search') // Recherche sur email aussi
+                         ->orWhere('u.email LIKE :search')
                          ->setParameter('search', '%' . $search . '%');
         }
     
-        // Ajouter la clause de tri en fonction des paramètres
-        if ($sortField === 'u.nom') {
-            $queryBuilder->orderBy('u.nom', $sortDirection);
-        } elseif ($sortField === 'u.email') {
-            $queryBuilder->orderBy('u.email', $sortDirection);
+        if ($sortField === 'nombreCommandes') {
+            $queryBuilder->addSelect(
+                '(SELECT COUNT(c2.id) 
+                  FROM App\Entity\Commande c2 
+                  WHERE c2.utilisateur = u 
+                    AND c2.status = :status
+                ) AS HIDDEN nombreCommandes'
+            )
+            ->setParameter('status', StatutCommande::VALIDEE->value)
+            ->orderBy('nombreCommandes', $sortDirection)
+            ->groupBy('u.id');
         } else {
-            $queryBuilder->orderBy($sortField, $sortDirection); // Si c'est un autre champ
+            $queryBuilder->orderBy($sortField, $sortDirection);
         }
     
-        // Appliquer la pagination
         $pagination = $paginator->paginate(
-            $queryBuilder, // La requête à paginer
-            $request->query->getInt('page', 1), // Le numéro de page
-            10 // Nombre d'éléments par page
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            10
         );
     
-        // Rendre la vue
+        // On récupère la map des commandes par utilisateur depuis le repository de Commande, si besoin pour l'affichage
+        $nombreCommandesParUtilisateur = $commandeRepository->getNombreCommandesParUtilisateur();
+        $commandesParUtilisateurMap = [];
+        foreach ($nombreCommandesParUtilisateur as $commandeData) {
+            $commandesParUtilisateurMap[$commandeData['clientId']] = $commandeData['nombreCommandes'];
+        }
+    
         return $this->render('admin/utilisateur.html.twig', [
             'pagination' => $pagination,
             'search' => $search,
             'sortField' => $sortField,
             'sortDirection' => $sortDirection,
+            'commandesParUtilisateurMap' => $commandesParUtilisateurMap,
         ]);
     }
+    
+    
+    
 
     #[Route('/admin/commandes', name: 'commande.liste', methods: ['GET'])]
     public function listeCommandes(EntityManagerInterface $manager, Request $request, PaginatorInterface $paginator): Response
@@ -127,47 +142,49 @@ class DashboardController extends AbstractController
             'sortDirection' => $sortDirection,
         ]);
     }
-    
-    
+
     #[Route('/admin/stats', name: 'admin.stats')]
-    public function stats(CommandeRepository $commandeRepository, UtilisateurRepository $utilisateurRepository): Response
-    {
-        // Récupérer les données nécessaires pour le dashboard
-        $ventesParProduit = $commandeRepository->getVentesParProduit();
-    
-        // Récupérer le nombre total de commandes
-        $totalCommandes = $commandeRepository->createQueryBuilder('c')
-            ->select('COUNT(c.id)')  // Compte le nombre de commandes
-            ->where('c.status = :status')
-            ->setParameter('status', StatutCommande::VALIDEE)  // Commandes validées par exemple
-            ->getQuery()
-            ->getSingleScalarResult();  // Retourne un seul résultat (le total)
-        
-        // Récupérer le nombre total d'utilisateurs
-        $totalUsers = $utilisateurRepository->createQueryBuilder('u')
-        ->select('COUNT(u.id)')  // Compte le nombre d'utilisateurs
-        ->getQuery()
-        ->getSingleScalarResult();  // Retourne un seul résultat (le total)
-    
-        // Organiser les données pour Chart.js
-        $labels = [];
-        $dataQuantite = [];
-        $dataChiffreAffaires = [];
-    
-        foreach ($ventesParProduit as $vente) {
-            $labels[] = $vente['produit'];
-            $dataQuantite[] = $vente['quantiteVendue'];
-            $dataChiffreAffaires[] = $vente['chiffreAffaires'];
-        }
-    
-        // Passer les variables à la vue
-        return $this->render('admin/stats.html.twig', [
-            'labels' => $labels,
-            'dataQuantite' => $dataQuantite,
-            'dataChiffreAffaires' => $dataChiffreAffaires,
-            'totalCommandes' => $totalCommandes,  // Passer la variable au template
-            'totalUsers' => $totalUsers,  // Passer la variable au template
-        ]);
+public function stats(CommandeRepository $commandeRepository, UtilisateurRepository $utilisateurRepository): Response
+{
+    // Récupérer les données nécessaires pour le dashboard
+    $ventesParProduit = $commandeRepository->getVentesParProduit();
+    $totalCommandes = $commandeRepository->count([]);
+    $totalUsers = $utilisateurRepository->count([]);
+
+    $chiffreAffairesMensuel = $commandeRepository->getChiffreAffairesMensuel();
+    $topProduitsVendus = $commandeRepository->getTopProduitsVendus();
+    $topProduitsRemunerateurs = $commandeRepository->getTopProduitsRemunerateurs();
+    $topClients = $commandeRepository->getTopClients();
+    $ventesParTypeClient = $commandeRepository->getVentesParTypeClient();
+    $commandesEnCoursLivraison = $commandeRepository->getCommandesEnCoursLivraison();
+
+
+    // Préparer les données pour Chart.js
+    $labels = [];
+    $dataQuantite = [];
+    $dataChiffreAffaires = [];
+
+    foreach ($ventesParProduit as $vente) {
+        $labels[] = $vente['produit'];
+        $dataQuantite[] = $vente['quantiteVendue'];
+        $dataChiffreAffaires[] = $vente['chiffreAffaires'];
     }
+
+    // Passer les variables à la vue
+    return $this->render('admin/stats.html.twig', [
+        'labels' => $labels,
+        'dataQuantite' => $dataQuantite,
+        'dataChiffreAffaires' => $dataChiffreAffaires,
+        'totalCommandes' => $totalCommandes,
+        'totalUsers' => $totalUsers,
+        'chiffreAffairesMensuel' => $chiffreAffairesMensuel,
+        'topProduitsVendus' => $topProduitsVendus,
+        'topProduitsRemunerateurs' => $topProduitsRemunerateurs,
+        'topClients' => $topClients,
+        'ventesParTypeClient' => $ventesParTypeClient,
+        'commandesEnCoursLivraison' => $commandesEnCoursLivraison,
+    ]);
+}
+
     
 }

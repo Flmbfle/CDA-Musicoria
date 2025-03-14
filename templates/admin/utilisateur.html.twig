@@ -43,6 +43,14 @@
                         {% endif %}
                     </a>
                 </th>
+                <th class="py-3">
+                    <a href="{{ path('utilisateur.liste', {'sort': 'nombreCommandes', 'direction': sortDirection == 'ASC' ? 'DESC' : 'ASC', 'search': search }) }}">
+                        COMMANDE
+                        {% if sortField == 'nombreCommandes' %}
+                            <i class="fas fa-sort-{{ sortDirection == 'ASC' ? 'up' : 'down' }}"></i>
+                        {% endif %}
+                    </a>
+                </th>
                 <th class="py-3"><span class="gold">ACTIONS</span></th>
             </tr>
         </thead>
@@ -52,6 +60,11 @@
                     <td>{{ utilisateur.id }}</td>
                     <td class="d-none d-md-table-cell">{{ utilisateur.nom }}</td>
                     <td>{{ utilisateur.email }}</td>
+                    <td>
+                        {# Chercher le nombre de commandes de cet utilisateur dans le tableau map #}
+                        {% set nombreCommandes = commandesParUtilisateurMap[utilisateur.id] ?? 0 %}
+                        {{ nombreCommandes }}
+                    </td>
                     <td>
                         <a href="{{ path('profil.modifier', {id: utilisateur.id}) }}" class="btn btn-warning bi bi-pen"></a>
                     </td>
