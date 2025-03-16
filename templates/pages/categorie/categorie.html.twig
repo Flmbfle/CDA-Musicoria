@@ -4,7 +4,7 @@
 
 {% block body %}
 
-{# <section id="categorieFilter" class="bg-li my-4 py-3 inner-shadow col-12">
+<section id="categorieFilter" class="bg-li my-4 py-3 inner-shadow col-12">
     <div class="col-10 mx-auto">
         <div class="row d-flex justify-content-around align-items-center">
             <!-- Affichage du nombre total de résultats -->
@@ -18,13 +18,13 @@
                     Filtre
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                    {# <li><a class="dropdown-item" href="{{ path('app_categories', { 'sort': 'alphabetical_asc' }) }}">Alphabétique (A-Z)</a></li>
-                    <li><a class="dropdown-item" href="{{ path('app_categories', { 'sort': 'alphabetical_desc' }) }}">Alphabétique (Z-A)</a></li>
+                    <li><a class="dropdown-item" href="{{ path('categorie', { 'sort': 'alphabetical_asc' }) }}">Alphabétique (A-Z)</a></li>
+                    <li><a class="dropdown-item" href="{{ path('categorie', { 'sort': 'alphabetical_desc' }) }}">Alphabétique (Z-A)</a></li>
                 </ul>
             </div>
         </div>
     </div>
-</section> #}
+</section>
     {% if is_granted('ROLE_ADMIN') %}
         <section>
             <a href="{{ path('categorie.nouveau')}}" class="btn btn-info">Nouvelle catégorie</a>
@@ -46,11 +46,12 @@
                                 </div>
                             </a>
                         </div>
-                            {# A SUPPRIMER #}
+                        {% if is_granted('ROLE_ADMIN') %}
                             <div>
                                 <a href="{{ path('categorie.modifier', { id: categorie.id })}}" class="btn btn-info">Modifier</a>
                                 <a href="{{ path('categorie.supprimer', { id: categorie.id })}}" class="btn btn-danger">Supprimer</a>
                             </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

@@ -10,6 +10,7 @@ use App\Service\SendEmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UtilisateurRepository;
 use App\Form\ResetPasswordRequestFormType;
+use App\Security\Authenticator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class SecurityController extends AbstractController
 {
@@ -55,7 +57,14 @@ class SecurityController extends AbstractController
      * @return Response
      */
     #[Route('/inscription', 'security.registration', methods: ['GET', 'POST'])]
-    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher): Response
+    public function registration(
+        Request $request, 
+        EntityManagerInterface $manager, 
+        UserPasswordHasherInterface $passwordHasher, 
+        UserAuthenticatorInterface $userAuthenticator, 
+        Authenticator $authenticator,
+        SendEmailService $mail, 
+        JWTService $jwt): Response
     {
         $user = new Utilisateur();
         $user->setRoles(['ROLE_USER']);
@@ -64,18 +73,38 @@ class SecurityController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hashing du mot de passe
-            $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($hashedPassword);
+            $user->setPassword(
+                $passwordHasher->hashPassword($user, $form->get('plainPassword')->getData())
+            );
 
             // Persist user in the database
             $manager->persist($user);
             $manager->flush();
 
-            // Flash message et redirection vers la page de login
             $this->addFlash('success', 'Votre compte a bien été créé. Un email de confirmation vous a été envoyé.');
 
-            return $this->redirectToRoute('security.login');
+            // On génére le JWTToken de l'utilisateur
+            $header = [
+                'typ' => 'JWT',
+                'alg' => 'HS256'
+            ];
+            $payload = [
+                'user_id' => $user->getId(),
+            ];
+
+            $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+
+            // Envoi de l'email de confirmation
+            $mail->send(
+                'no-reply@musicoria.fr',
+                $user->getEmail(),
+                'Activation de votre compte Musicoria',
+                'email_confirmation',
+                compact('user', 'token')
+            );
+
+            // return $this->redirectToRoute('security.login');
+            return $userAuthenticator->authenticateUser($user, $authenticator, $request);
         }
 
         return $this->render('pages/security/registration.html.twig', [
@@ -83,6 +112,77 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    #[Route('/verif/{token}', name: 'verify_user')]
+    public function verifyUser($token, JWTService $jwt, UtilisateurRepository $usersRepository, EntityManagerInterface $em): Response
+    {
+        //On vérifie si le token est valide, n'a pas expiré et n'a pas été modifié
+        if($jwt->isValid($token) && !$jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))){
+            // On récupère le payload
+            $payload = $jwt->getPayload($token);
+
+            // On récupère le user du token
+            $user = $usersRepository->find($payload['user_id']);
+
+            //On vérifie que l'utilisateur existe et n'a pas encore activé son compte
+            if($user && !$user->getIsVerified()){
+                $user->setIsVerified(true);
+                $em->flush($user);
+                $this->addFlash('success', 'Utilisateur activé');
+                return $this->redirectToRoute('profile_index');
+            }
+        }
+        // Ici un problème se pose dans le token
+        $this->addFlash('danger', 'Le token est invalide ou a expiré');
+        return $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/renvoiverif', name: 'resend_verif')]
+    public function resendVerif(JWTService $jwt, SendEmailService $mail, UtilisateurRepository $usersRepository): Response
+    {
+        $user = $this->getUser();
+            if (!$user instanceof Utilisateur) {
+                // Si $user n'est pas une instance de la classe Utilisateur (par exemple, non authentifié)
+                $this->addFlash('danger', 'Vous devez être connecté pour accéder à cette page');
+                return $this->redirectToRoute('app_login');
+            }
+
+
+        if(!$user){
+            $this->addFlash('danger', 'Vous devez être connecté pour accéder à cette page');
+            return $this->redirectToRoute('app_login');    
+        }
+
+        if($user->isVerified()){
+            $this->addFlash('warning', 'Cet utilisateur est déjà activé');
+            return $this->redirectToRoute('profile_index');    
+        }
+
+        // On génère le JWT de l'utilisateur
+        // On crée le Header
+        $header = [
+            'typ' => 'JWT',
+            'alg' => 'HS256'
+        ];
+
+        // On crée le Payload
+        $payload = [
+            'user_id' => $user->getId()
+        ];
+
+        // On génère le token
+        $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+
+        // On envoie un mail
+        $mail->send(
+            'no-reply@monsite.net',
+            $user->getEmail(),
+            'Activation de votre compte sur le site e-commerce',
+            'email_confirmation',
+            compact('user', 'token')
+        );
+        $this->addFlash('success', 'Email de vérification envoyé');
+        return $this->redirectToRoute('accueil');
+    }
 
     #[Route(path:'/mot-de-passe-oublie', name:'app_forgotten_password')]
     public function forgottenPassword(Request $request, UtilisateurRepository $utilisateurRepository, JWTService $jwt, SendEmailService $email): Response

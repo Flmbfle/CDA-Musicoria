@@ -74,11 +74,12 @@
                                     <a href="#" class="btn bi bi-heart"></a>
                                     <a href="{{ path('panier.ajouter', {'id': produit.id}) }}" class="btn bi bi-cart-plus"></a>
                                 </div>
-                                {# A SUPPRIMER #}
-                                <div class="card-footer">
-                                    <a href="{{ path('produit.modifier', { id: produit.id })}}" class="btn btn-info">Modifier</a>
-                                    <a href="{{ path('produit.supprimer', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
-                                </div>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <div class="card-footer">
+                                        <a href="{{ path('produit.modifier', { id: produit.id })}}" class="btn btn-info">Modifier</a>
+                                        <a href="{{ path('produit.supprimer', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}

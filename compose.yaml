@@ -18,7 +18,7 @@ services:
       PMA_HOST: database  # Le nom du service MySQL dans le même réseau
       PMA_PORT: 3306      # Port MySQL par défaut
     ports:
-      - "8080:80"         # Expose le port 8080 de votre machine vers le port 80 du conteneur phpMyAdmin
+      - "8080:80"         # Expose le port 8080 de la machine vers le port 80 du conteneur phpMyAdmin
     depends_on:
       - database
     networks:

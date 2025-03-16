@@ -136,11 +136,19 @@ class AppFixtures extends Fixture
                     ->setCodePostal($this->faker->postcode())
                     ->setPays($this->faker->country());
 
+            // Générer le nom et le prénom
+            $nom = $this->faker->lastName();
+            $prenom = $this->faker->firstName();
+            $nomPrenom = $nom . ' ' . $prenom;
+
+            // Générer l'email en incluant le nom et le prénom
+            $emailUtilisateur = strtolower(str_replace(' ', '.', $nomPrenom)) . '@gmail.com';
+
             // Génération des données
-            $user->setEmail($this->faker->unique()->email())
+            $user->setEmail($emailUtilisateur)
                 ->setTypeUtilisateur($this->faker->randomElement([TypeUtilisateur::PARTICULIER, TypeUtilisateur::PROFESSIONNEL]))
-                ->setNom($this->faker->lastName())
-                ->setPrenom($this->faker->firstName())
+                ->setNom($nom)
+                ->setPrenom($prenom)
                 ->setRoles(['ROLE_CLIENT'])
                 ->setTelephone($this->faker->phoneNumber())
                 ->setCoefficient($this->faker->randomFloat(2, 1, 5))
