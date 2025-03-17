@@ -27,6 +27,7 @@ class ProduitRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    // Méthode pour recuperer les produits les plus vendu
     public function getTopSellingProducts()
     {
         return $this->createQueryBuilder('p')
