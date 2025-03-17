@@ -4,25 +4,25 @@
 
 {% block body %}
 {% if not produits.items is same as ([]) %}
+    {% for produit in topProduits %}
     <section id="bestProduct" class="my-4">
         <div class="col-10 mx-auto">
             <div class="row d-flex justify-content-around">
                 <h2 class="text-center">Les Bests Seller</h2>
-                {% for produit in topProduits %}
-                    <div class="col-md-2">
-                        <div class="card text-white">
-                            <a href="{{ path('produit.detail', { 'slug': produit.slug }) }}" class="text-decoration-none">
-                                <img src="{{ produit.image }}" class="card-img-top" alt="{{ produit.slug }}">
-                                <div class="card-img-overlay d-flex justify-content-center align-items-center p-0">
-                                    <h5 class="card-title bg-dark bg-opacity-50 p-2 rounded gold">{{ produit.libelle }}</h5>
-                                </div>
-                            </a>
-                        </div>
+                <div class="col-md-2">
+                    <div class="card text-white">
+                        <a href="{{ path('produit.detail', { 'slug': produit.slug }) }}" class="text-decoration-none">
+                            <img src="{{ produit.image }}" class="card-img-top" alt="{{ produit.slug }}">
+                            <div class="card-img-overlay d-flex justify-content-center align-items-center p-0">
+                                <h5 class="card-title bg-dark bg-opacity-50 p-2 rounded gold">{{ produit.libelle }}</h5>
+                            </div>
+                        </a>
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
     </section>
+    {% endfor %}
 
     <section id="productFilter" class="col-12 bg-li my-4 py-3 inner-shadow">
         <div class="col-10 mx-auto">
