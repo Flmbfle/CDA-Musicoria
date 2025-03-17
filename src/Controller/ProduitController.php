@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Produit;
 use App\Form\ProduitType;
+use App\Entity\PanierProduit;
 use App\Repository\ProduitRepository;
+use App\Repository\CommandeRepository;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\PanierProduitRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,17 +32,22 @@ class ProduitController extends AbstractController
      * @return Response
      */
     #[Route('/produit', name: 'produit', methods:['GET'])]
-    public function index(ProduitRepository $repository, PaginatorInterface $paginator , Request $request): Response
+    public function index(PanierProduitRepository $panierProduitRepository, ProduitRepository $produitRepository, PaginatorInterface $paginator , Request $request, CommandeRepository $commande): Response
     {
         $produits = $paginator->paginate
         (
-            $repository->findAll(),
+            $produitRepository->findAll(),
             $request->query->getInt('page', 1),
             12
         );
+        
+        $topProduits = $panierProduitRepository->getTopSellingProducts();
+        // dd($topProduits);
 
         return $this->render('pages/produit/produit.html.twig', [
             'produits' => $produits,
+            'topProduits' => $topProduits
+
         ]);
     }
 

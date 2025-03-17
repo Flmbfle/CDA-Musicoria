@@ -1,5 +1,6 @@
 Pour commencer utiliser dans le teminal :
-    docker-compose up -d
+    
+    
 
 Pour se connecter au container symfony :
     docker exec -it cda-musicoria-symfony-1 bash

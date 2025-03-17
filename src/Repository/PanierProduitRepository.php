@@ -16,28 +16,18 @@ class PanierProduitRepository extends ServiceEntityRepository
         parent::__construct($registry, PanierProduit::class);
     }
 
-    //    /**
-    //     * @return PanierProduit[] Returns an array of PanierProduit objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getTopSellingProducts()
+    {
+        return $this->createQueryBuilder('pp')
+            ->select('p.id, p.libelle, p.image, p.slug,  SUM(pp.quantite) AS totalSold')
+            //->join('App\Entity\Produit','p',\Doctrine\ORM\Query\Expr\Join::WITH, 'p = p.produits')  // jointure avec 
+            ->join('pp.produit', 'p')           // Jointure avec la table produit
+            ->groupBy('pp.produit')                  // Groupement par produit
+            ->orderBy('totalSold', 'DESC')     // Tri des produits par quantité totale
+            ->setMaxResults(5)                 // Limiter aux 5 produits les plus vendus
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?PanierProduit
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+
 }

@@ -37,3 +37,7 @@ EXPOSE 9000
 # Étape 9 : Installer Symfony CLI
 RUN curl -sS https://get.symfony.com/cli/installer | bash && \
     mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
+
+# Étape 10 : Démarrer Symfony serveur et PHP-FPM
+CMD ["sh", "-c", "php-fpm & symfony server:start --no-tls --allow-all-ip --dir=/var/www/html"]
+
