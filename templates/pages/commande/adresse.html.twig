@@ -1,3 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Adresse de livraison{% endblock %}
+
+{% block body %}
+
 <div class="container mt-5">
     <div class="card shadow-lg p-4">
         <h2 class="text-center mb-4">Renseigner votre adresse</h2>
@@ -9,6 +15,14 @@
                 <label for="ligne1" class="form-label fw-bold">Adresse</label>
                 {{ form_widget(form.ligne1, {'attr': {'class': 'form-control', 'placeholder': 'Rue, numéro...'}}) }}
                 {% for error in form.ligne1.vars.errors %}
+                    <div class="text-danger small">{{ error.message }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                <label for="ligne2" class="form-label fw-bold">Complément d'adresse</label>
+                {{ form_widget(form.ligne2, {'attr': {'class': 'form-control', 'placeholder': 'Appt, bat...'}}) }}
+                {% for error in form.ligne2.vars.errors %}
                     <div class="text-danger small">{{ error.message }}</div>
                 {% endfor %}
             </div>
@@ -47,3 +61,5 @@
         </form>
     </div>
 </div>
+
+{% endblock %}

@@ -31,9 +31,6 @@ class AdresseType extends AbstractType
             ])
             ->add('pays', TextType::class, [
                 'label' => 'Pays',
-            ])
-            ->add('save', SubmitType::class, [
-                'label' => 'Enregistrer',
             ]);
     }
 
