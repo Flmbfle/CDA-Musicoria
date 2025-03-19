@@ -8,7 +8,7 @@ enum StatutCommande: string
     case VALIDEE = 'Validé';
     case ANNULE = 'Annulé';
     case ENVOYE = 'Envoyé';
-    case LIVRÉE = 'Livré';
+    case LIVREE = 'Livré';
 
     public function label(): string
     {
@@ -17,7 +17,7 @@ enum StatutCommande: string
             self::VALIDEE => 'Validé',
             self::ANNULE => 'Annulé',
             self::ENVOYE => 'Envoyé',
-            self::LIVRÉE => 'Livré',
+            self::LIVREE => 'Livré',
         };
     }
 }

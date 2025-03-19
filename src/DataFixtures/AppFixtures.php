@@ -3,12 +3,16 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
+use App\Entity\Panier;
 use GuzzleHttp\Client;
 use App\Entity\Adresse;
 use App\Entity\Produit;
+use App\Entity\Commande;
 use App\Entity\Categorie;
 use App\Entity\Fournisseur;
 use App\Entity\Utilisateur;
+use App\Enum\StatutCommande;
+use App\Entity\PanierProduit;
 use App\Enum\TypeUtilisateur;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -59,7 +63,7 @@ class AppFixtures extends Fixture
             // Créer la catégorie principale
             $mainCategory = new Categorie();
             $mainCategory->setLibelle($mainCategoryName)
-                ->setImage('https://picsum.photos/640/480?random')
+                ->setImage('https://picsum.photos/id/'.mt_rand(10,100).'/640/480?random')
                 ->setSlug($this->faker->slug);
 
             $manager->persist($mainCategory);
@@ -70,7 +74,7 @@ class AppFixtures extends Fixture
             {
                 $subCategory = new Categorie();
                 $subCategory->setLibelle($subCategoryName)
-                    ->setImage('https://picsum.photos/640/480?random')
+                    ->setImage('https://picsum.photos/id/'.mt_rand(10,100).'/640/480?random')
                     ->setSlug($this->faker->slug)
                     ->setParent($mainCategory); // Associer à la catégorie principale
 
@@ -117,7 +121,7 @@ class AppFixtures extends Fixture
                         ->setFournisseur($fournisseurs[array_rand($fournisseurs)]) // Fournisseur aléatoire
                         ->setCategorie($categories[$instrument]) // Associer à la sous-catégorie
                         ->setDescription($this->faker->text(200))
-                        ->setImage('https://picsum.photos/640/480?random')
+                        ->setImage('https://picsum.photos/id/'.mt_rand(10,400).'/640/480?random')
                         ->setSlug($slug)
                         ->setActive(mt_rand(0, 1) == 1);
                     $manager->persist($produit);
@@ -181,5 +185,74 @@ class AppFixtures extends Fixture
         $manager->persist($user);
 
         $manager->flush();
+        
+        // COMMANDES
+        for ($c = 0; $c < 20; $c++) {
+            $commande = new Commande();
+            
+            // Sélection aléatoire d'un utilisateur existant
+            $utilisateurs = $manager->getRepository(Utilisateur::class)->findAll();
+            if ($utilisateurs) {
+                $utilisateur = $utilisateurs[array_rand($utilisateurs)];
+            }
+            
+            // Sélection aléatoire d'une adresse de l'utilisateur
+            $adresse = $utilisateur->getAdresses()->first();
+            
+            // Générer un panier
+            $panier = new Panier();
+            $panier->setUtilisateur($utilisateur)
+                   ->setCreatedAt(new \DateTimeImmutable())
+                   ->setUpdatedAt(new \DateTimeImmutable())
+                   ->setStatus($this->faker->randomElement(['en cours', 'validé', 'expédié']));
+            
+            $totalHT = 0;
+            $totalTTC = 0;
+            
+            for ($i = 0; $i < rand(1, 10); $i++) {
+                $produits = $manager->getRepository(Produit::class)->findAll();
+                if ($produits) {
+                    $produit = $produits[array_rand($produits)];
+                    $quantite = rand(1, 4);
+                    
+                    $panierProduit = new PanierProduit();
+                    $panierProduit->setPanier($panier)
+                                ->setProduit($produit)
+                                ->setQuantite($quantite)
+                                ->setPrix($produit->getPrixVente())
+                                ->setAddedAt(new \DateTimeImmutable());
+
+                    $panier->addProduit($panierProduit);
+                    $totalHT += $produit->getPrixVente() * $quantite;
+
+                    $manager->persist($panierProduit);
+                }
+
+            }
+            
+            // Ajout des taxes
+            $totalTTC = $totalHT * 1.2;
+            
+            $commande->setUtilisateur($utilisateur)
+                    ->setAdresse($adresse)
+                    ->setPanier($panier)
+                    ->setPrixHT($totalHT)
+                    ->setPrixTTC($totalTTC)
+                    ->setStatus($this->faker->randomElement([
+                        StatutCommande::EN_ATTENTE,
+                        StatutCommande::VALIDEE,
+                        StatutCommande::LIVREE
+                    ]))
+                    ->setCreatedAt(new \DateTimeImmutable())
+                    ->setReference(strtoupper($this->faker->unique()->bothify('CMD-#####')))
+                    ->setInvoicePdfUrl('https://example.com/facture/' . uniqid() . '.pdf');
+            
+            $manager->persist($panier);
+            $manager->persist($commande);
+        }
+        
+        $manager->flush();
     }
+
+
 }

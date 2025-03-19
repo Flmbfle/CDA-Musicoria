@@ -27,7 +27,6 @@ class PanierController extends AbstractController
 
 
     #[Route('/panier', 'panier')]
-    #[IsGranted('ROLE_CLIENT')]
     public function index()
     {
         $user = $this->getUser();

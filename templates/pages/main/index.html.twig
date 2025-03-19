@@ -3,7 +3,47 @@
 {% block title %}Hello MainController!{% endblock %}
 
 {% block body %}
-<section>
-    <h1>Accueil</h1>
+<section class="my-5">
+    <div class="text-center">
+        <h1 class="gold">Musicoria</h1>
+        <p class="">Découvez notre gamme de produits de haute qualité !</p>
+        <button class="btn btn-dark gold rounded-pill px-4">
+            <a class="nav-link {% if app.request.attributes.get('_route') == 'produit' %}active{% endif %}" href="{{ path('produit') }}" >Découvrir</a>
+        </button>
+    </div>
+</section>
+<section class="my-5">
+    <div class="card bg-charcoal gold text-center p-4  rounded rounded-5 shadow">
+        <h3 class="card-title">Top Produits</h3>
+        <p class="card-text mt-3">Explorez nos produits les plus populaires !</p>
+        <div class="card-body">
+            <section id="bestProduct" class="my-3">
+        <div class="col-10 mx-auto">
+            <div class="row d-flex justify-content-around">
+                {% for produit in topProduits %}
+                        <div class="col-md-4 p-3">
+                            <div class="card shadow rounded-3 m-2">
+                                <a href="{{ path('produit.detail', { 'slug': produit.slug }) }}">
+                                    <img src="{{ produit.image }}" class="card-img-top" alt="{{ produit.slug }}">
+                                </a>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ produit.libelle }}</h5>
+                                </div>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <div class="card-footer">
+                                        <a href="{{ path('produit.modifier', { id: produit.id })}}" class="btn btn-info">Modifier</a>
+                                        <a href="{{ path('produit.supprimer', { id: produit.id })}}" class="btn btn-danger">Supprimer</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                {% else %}
+                    <p class="text-center">Aucun produit trouvé.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+        </div>
+    </div>
 </section>
 {% endblock %}
